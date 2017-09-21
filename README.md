@@ -15,6 +15,7 @@ Name : Jack Tolton
 Email : toltonj@uoguelph.ca
 Responsibility : Desktop/Mobile Application Front End, Back End
 
+
 Description
 
 For our project, we are going to be designing a fantasy sports application. The application will allow users to register for accounts and be able to manage and participate in multiple fantasy sports teams, including football, hockey, baseball and basketball.
