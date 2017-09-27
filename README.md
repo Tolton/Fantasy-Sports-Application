@@ -6,15 +6,15 @@ Project Lead : Jon Warren
 
 Name : Jon Warren
 Email : warrenj@uoguelph.ca 
-Responsibility : Desktop Application Front End, Back End
+Responsibility : Desktop Application Front End
 
 Name : Katie Myers
 Email : myersk@uoguelph.ca
-Responsibility : Mobile Application Front End, Back End
+Responsibility : Mobile Application Front End
 
 Name : Jack Tolton
 Email : toltonj@uoguelph.ca
-Responsibility : Desktop/Mobile Application Front End, Back End
+Responsibility : Back End
 
 
 Description
