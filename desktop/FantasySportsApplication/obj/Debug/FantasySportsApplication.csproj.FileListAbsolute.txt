@@ -1,0 +1,22 @@
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\bin\Debug\FantasySportsApplication.exe.config
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\bin\Debug\FantasySportsApplication.exe
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\bin\Debug\FantasySportsApplication.pdb
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.csprojResolveAssemblyReference.cache
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.Properties.Resources.resources
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.csproj.GenerateResource.Cache
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.csproj.CoreCompileInputs.cache
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.exe
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.pdb
+C:\Users\Jon\Documents\Visual Studio 2017\Projects\FantasySportsApplication\FantasySportsApplication\obj\Debug\FantasySportsApplication.frmSplash.resources
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\FantasySportsApplication.exe.config
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\FantasySportsApplication.exe
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\FantasySportsApplication.pdb
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.csprojResolveAssemblyReference.cache
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.frmSplash.resources
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.Properties.Resources.resources
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.csproj.GenerateResource.Cache
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.csproj.CoreCompileInputs.cache
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.exe
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.pdb
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\MySql.Data.dll
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\MySql.Data.xml

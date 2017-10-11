@@ -15,8 +15,9 @@ def participantLogin(username, password):
     
     try:
         db = MySQLdb.connect(user=userName, passwd=passName, host=hostName, db = dbName)
-    
+        print "success"
     except Error as e:
+        print "fail"
         return False
                              
     c = db.cursor()
