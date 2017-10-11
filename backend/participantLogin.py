@@ -3,7 +3,7 @@ import json
 from _mysql import Error
 import sys
 
-# Prints the json of 0 as the participant id if db fails to return the participant id from the login
+# Prints "Login Failed." if db fails to return the participant id from the login
 # Prints the json of the participant id if the login is correct
 
 def participantLogin(username, password):
@@ -15,9 +15,8 @@ def participantLogin(username, password):
     
     try:
         db = MySQLdb.connect(user=userName, passwd=passName, host=hostName, db = dbName)
-        print "success"
+    
     except Error as e:
-        print "fail"
         return False
                              
     c = db.cursor()
@@ -25,9 +24,7 @@ def participantLogin(username, password):
                                      
     ret = c.fetchone()
     if ret == None:
-        jsonRet = {}
-        jsonRet['participant_id'] = 0;
-        print json.dumps(jsonRet);
+        print "Login Failed.";
     else:
         jsonRet = {}
         jsonRet['participant_id'] = ret[0];
