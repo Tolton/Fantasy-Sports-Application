@@ -84,5 +84,11 @@ namespace FantasySportsApplication
             pnlLogin.Visible = true;
             pnlWelcome.Visible = false;
         }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            frmRegister registerform = new frmRegister();
+            registerform.Show();
+        }
     }
 }

@@ -31,8 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.pnlLogin = new System.Windows.Forms.Panel();
             this.lblLoginFail = new System.Windows.Forms.Label();
-            this.txtUsername = new FantasySportsApplication.PlaceHolderTextBox();
-            this.txtPassword = new FantasySportsApplication.PlaceHolderTextBox();
             this.btnRegister = new System.Windows.Forms.Button();
             this.btnLogin = new System.Windows.Forms.Button();
             this.picExit = new System.Windows.Forms.PictureBox();
@@ -40,6 +38,8 @@
             this.pnlWelcome = new System.Windows.Forms.Panel();
             this.lblWelcome = new System.Windows.Forms.Label();
             this.btnLogout = new System.Windows.Forms.Button();
+            this.txtUsername = new FantasySportsApplication.PlaceHolderTextBox();
+            this.txtPassword = new FantasySportsApplication.PlaceHolderTextBox();
             this.pnlLogin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picExit)).BeginInit();
             this.pnlWelcome.SuspendLayout();
@@ -67,32 +67,6 @@
             this.lblLoginFail.TabIndex = 3;
             this.lblLoginFail.Text = "Incorrect username/password, please try again.";
             // 
-            // txtUsername
-            // 
-            this.txtUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Italic);
-            this.txtUsername.ForeColor = System.Drawing.Color.Gray;
-            this.txtUsername.isPassword = false;
-            this.txtUsername.Location = new System.Drawing.Point(362, 8);
-            this.txtUsername.Name = "txtUsername";
-            this.txtUsername.PlaceHolderText = "Username";
-            this.txtUsername.Size = new System.Drawing.Size(143, 26);
-            this.txtUsername.TabIndex = 1;
-            this.txtUsername.Text = "Username";
-            // 
-            // txtPassword
-            // 
-            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Italic);
-            this.txtPassword.ForeColor = System.Drawing.Color.Gray;
-            this.txtPassword.isPassword = true;
-            this.txtPassword.Location = new System.Drawing.Point(509, 8);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.PlaceHolderText = "Password";
-            this.txtPassword.Size = new System.Drawing.Size(143, 26);
-            this.txtPassword.TabIndex = 2;
-            this.txtPassword.Text = "Password";
-            // 
             // btnRegister
             // 
             this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -103,6 +77,7 @@
             this.btnRegister.TabIndex = 0;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
             // btnLogin
             // 
@@ -165,15 +140,41 @@
             this.btnLogout.UseVisualStyleBackColor = true;
             this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
             // 
+            // txtUsername
+            // 
+            this.txtUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Italic);
+            this.txtUsername.ForeColor = System.Drawing.Color.Gray;
+            this.txtUsername.isPassword = false;
+            this.txtUsername.Location = new System.Drawing.Point(362, 8);
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.PlaceHolderText = "Username";
+            this.txtUsername.Size = new System.Drawing.Size(143, 26);
+            this.txtUsername.TabIndex = 1;
+            this.txtUsername.Text = "Username";
+            // 
+            // txtPassword
+            // 
+            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Italic);
+            this.txtPassword.ForeColor = System.Drawing.Color.Gray;
+            this.txtPassword.isPassword = true;
+            this.txtPassword.Location = new System.Drawing.Point(509, 8);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PlaceHolderText = "Password";
+            this.txtPassword.Size = new System.Drawing.Size(143, 26);
+            this.txtPassword.TabIndex = 2;
+            this.txtPassword.Text = "Password";
+            // 
             // frmSplash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.ClientSize = new System.Drawing.Size(875, 699);
-            this.Controls.Add(this.pnlWelcome);
             this.Controls.Add(this.picExit);
             this.Controls.Add(this.pnlLogin);
+            this.Controls.Add(this.pnlWelcome);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "frmSplash";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
