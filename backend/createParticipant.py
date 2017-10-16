@@ -22,11 +22,6 @@ def createParticipant(username, password):
     try:
         query = "INSERT INTO participants(username, password) VALUES(%s, %s)"
         cursor.execute(query, (username, password))
-
-
-        #Below commented code is for testing to make sure the user was added to db
-        #query = "SELECT * FROM participants"
-        #cursor.execute(query)
         
         db.commit()
     except Error as h:
