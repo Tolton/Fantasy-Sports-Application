@@ -33,16 +33,21 @@
             this.lblLoginFail = new System.Windows.Forms.Label();
             this.btnRegister = new System.Windows.Forms.Button();
             this.btnLogin = new System.Windows.Forms.Button();
-            this.picExit = new System.Windows.Forms.PictureBox();
             this.tmrLoginFail = new System.Windows.Forms.Timer(this.components);
             this.pnlWelcome = new System.Windows.Forms.Panel();
             this.lblWelcome = new System.Windows.Forms.Label();
             this.btnLogout = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.picExit = new System.Windows.Forms.PictureBox();
+            this.btnFootball = new System.Windows.Forms.Button();
+            this.btnHockey = new System.Windows.Forms.Button();
+            this.btnBaseball = new System.Windows.Forms.Button();
+            this.btnBasketball = new System.Windows.Forms.Button();
             this.txtUsername = new FantasySportsApplication.PlaceHolderTextBox();
             this.txtPassword = new FantasySportsApplication.PlaceHolderTextBox();
             this.pnlLogin.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picExit)).BeginInit();
             this.pnlWelcome.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExit)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlLogin
@@ -91,19 +96,6 @@
             this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
-            // picExit
-            // 
-            this.picExit.Image = global::FantasySportsApplication.Properties.Resources.exit_normal;
-            this.picExit.Location = new System.Drawing.Point(785, 587);
-            this.picExit.Name = "picExit";
-            this.picExit.Size = new System.Drawing.Size(75, 100);
-            this.picExit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picExit.TabIndex = 1;
-            this.picExit.TabStop = false;
-            this.picExit.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picExit_MouseClick);
-            this.picExit.MouseEnter += new System.EventHandler(this.picExit_MouseEnter);
-            this.picExit.MouseLeave += new System.EventHandler(this.picExit_MouseLeave);
-            // 
             // tmrLoginFail
             // 
             this.tmrLoginFail.Interval = 50;
@@ -140,6 +132,68 @@
             this.btnLogout.UseVisualStyleBackColor = true;
             this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
             // 
+            // label1
+            // 
+            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label1.Location = new System.Drawing.Point(10, 65);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(855, 1);
+            this.label1.TabIndex = 3;
+            // 
+            // picExit
+            // 
+            this.picExit.Image = global::FantasySportsApplication.Properties.Resources.exit_normal;
+            this.picExit.Location = new System.Drawing.Point(803, 608);
+            this.picExit.Name = "picExit";
+            this.picExit.Size = new System.Drawing.Size(60, 80);
+            this.picExit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExit.TabIndex = 1;
+            this.picExit.TabStop = false;
+            this.picExit.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picExit_MouseClick);
+            this.picExit.MouseEnter += new System.EventHandler(this.picExit_MouseEnter);
+            this.picExit.MouseLeave += new System.EventHandler(this.picExit_MouseLeave);
+            // 
+            // btnFootball
+            // 
+            this.btnFootball.Enabled = false;
+            this.btnFootball.Location = new System.Drawing.Point(68, 126);
+            this.btnFootball.Name = "btnFootball";
+            this.btnFootball.Size = new System.Drawing.Size(359, 200);
+            this.btnFootball.TabIndex = 4;
+            this.btnFootball.Text = "Football";
+            this.btnFootball.UseVisualStyleBackColor = true;
+            // 
+            // btnHockey
+            // 
+            this.btnHockey.Enabled = false;
+            this.btnHockey.Location = new System.Drawing.Point(433, 126);
+            this.btnHockey.Name = "btnHockey";
+            this.btnHockey.Size = new System.Drawing.Size(359, 200);
+            this.btnHockey.TabIndex = 5;
+            this.btnHockey.Text = "Hockey";
+            this.btnHockey.UseVisualStyleBackColor = true;
+            this.btnHockey.Click += new System.EventHandler(this.btnHockey_Click);
+            // 
+            // btnBaseball
+            // 
+            this.btnBaseball.Enabled = false;
+            this.btnBaseball.Location = new System.Drawing.Point(68, 332);
+            this.btnBaseball.Name = "btnBaseball";
+            this.btnBaseball.Size = new System.Drawing.Size(359, 200);
+            this.btnBaseball.TabIndex = 6;
+            this.btnBaseball.Text = "Baseball";
+            this.btnBaseball.UseVisualStyleBackColor = true;
+            // 
+            // btnBasketball
+            // 
+            this.btnBasketball.Enabled = false;
+            this.btnBasketball.Location = new System.Drawing.Point(433, 332);
+            this.btnBasketball.Name = "btnBasketball";
+            this.btnBasketball.Size = new System.Drawing.Size(359, 200);
+            this.btnBasketball.TabIndex = 7;
+            this.btnBasketball.Text = "Basketball";
+            this.btnBasketball.UseVisualStyleBackColor = true;
+            // 
             // txtUsername
             // 
             this.txtUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -171,7 +225,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(875, 699);
+            this.ClientSize = new System.Drawing.Size(875, 700);
+            this.Controls.Add(this.btnBasketball);
+            this.Controls.Add(this.btnBaseball);
+            this.Controls.Add(this.btnHockey);
+            this.Controls.Add(this.btnFootball);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.picExit);
             this.Controls.Add(this.pnlLogin);
             this.Controls.Add(this.pnlWelcome);
@@ -181,8 +240,8 @@
             this.Text = "Fantasy Sports";
             this.pnlLogin.ResumeLayout(false);
             this.pnlLogin.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picExit)).EndInit();
             this.pnlWelcome.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picExit)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -200,6 +259,11 @@
         private System.Windows.Forms.Panel pnlWelcome;
         private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.Label lblWelcome;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnFootball;
+        private System.Windows.Forms.Button btnHockey;
+        private System.Windows.Forms.Button btnBaseball;
+        private System.Windows.Forms.Button btnBasketball;
     }
 }
 

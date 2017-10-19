@@ -21,3 +21,6 @@ C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication
 C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\MySql.Data.dll
 C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\MySql.Data.xml
 C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.frmRegister.resources
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\obj\Debug\FantasySportsApplication.frmMain.resources
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Jon\Desktop\Fantasy-Sports-Application\desktop\FantasySportsApplication\bin\Debug\Newtonsoft.Json.xml

@@ -48,6 +48,7 @@ namespace FantasySportsApplication
 
                         pnlWelcome.Visible = true;
                         pnlLogin.Visible = false;
+                        btnHockey.Enabled = true;
                     }
                 }
                 if (!loginSuccess)
@@ -83,12 +84,20 @@ namespace FantasySportsApplication
             //REMOVE USERNAME
             pnlLogin.Visible = true;
             pnlWelcome.Visible = false;
+            btnHockey.Enabled = false;
         }
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
             frmRegister registerform = new frmRegister();
             registerform.Show();
+        }
+
+        private void btnHockey_Click(object sender, EventArgs e)
+        {
+            frmMain mainForm = new frmMain();
+            mainForm.Show();
+            this.Hide();
         }
     }
 }
