@@ -2,8 +2,10 @@ import MySQLdb
 import json
 from _mysql import Error
 import sys
+import os
+import hashlib
 
-# Prints "Login Failed." if db fails to return the participant id from the login
+# Prints the json with a participant id of 0  if db fails to return the participant id from the login
 # Prints the json of the participant id if the login is correct
 
 def participantLogin(username, password):
@@ -18,13 +20,19 @@ def participantLogin(username, password):
     
     except Error as e:
         return False
-                             
+    
+    salt = os.urandom(8)
+    hex_dig = hashlib.sha256(password).hexdigest()
+    print(hex_dig)
+
     c = db.cursor()
-    c.execute("SELECT participant_id FROM participants WHERE username = %s AND password = %s", (username, password))
+    c.execute("SELECT participant_id FROM participants WHERE username = %s AND password = %s", (username, hex_dig))
                                      
     ret = c.fetchone()
     if ret == None:
-        print "Login Failed.";
+        jsonRet = {}
+        jsonRet['participant_id'] = 0;
+        print json.dumps(jsonRet);
     else:
         jsonRet = {}
         jsonRet['participant_id'] = ret[0];
