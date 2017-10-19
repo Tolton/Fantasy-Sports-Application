@@ -23,7 +23,6 @@ def participantLogin(username, password):
     
     salt = os.urandom(8)
     hex_dig = hashlib.sha256(password).hexdigest()
-    print(hex_dig)
 
     c = db.cursor()
     c.execute("SELECT participant_id FROM participants WHERE username = %s AND password = %s", (username, hex_dig))
