@@ -24,7 +24,6 @@ def createParticipant(username, password):
     salt = os.urandom(8)
     hash_object = hashlib.sha256(password)
     hex_dig = hash_object.hexdigest()
-    print(hex_dig)
 
     try:
         query = "INSERT INTO participants(username, password) VALUES(%s, %s)"
