@@ -6,7 +6,7 @@ import os
 # createLeague takes in the username, list of rules, max players for the league and the name in the 3 letter abbreviation
 
 
-def createLeague(username, rulesList, maxPlayers, sportID):
+def createLeague(username, leagueName, rulesList, maxPlayers, sportID):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -25,17 +25,18 @@ def createLeague(username, rulesList, maxPlayers, sportID):
     cursor.execute(query, username)
 
     participantID = cursor.fetchone()
+    
     try:
-        query = "INSERT INTO league(commissioner_id, rules, max_players, sport_id) VALUES(%s, %s, %s, %s)"
-        cursor.execute(query, (participantID[0], rulesList, maxPlayers, sportID))
+        query = "INSERT INTO league(league_name, commissioner_id, rules, max_players, sport_id) VALUES(%s, %s, %s, %s, %s)"
+        cursor.execute(query, (leagueName, participantID[0], rulesList, maxPlayers, sportID))
         db.commit()
     except TypeError:
-        print "Could not find the user"
+        print "Something went wrong.."
     
     
     db.close()
 
 
 
-#username, rules, max players, sport id
-createLeague(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+#username, league name, rules, max players, sport id
+createLeague(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
