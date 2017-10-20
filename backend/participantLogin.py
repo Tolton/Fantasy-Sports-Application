@@ -20,14 +20,18 @@ def participantLogin(username, password):
     
     except Error as e:
         return False
-    
-    salt = os.urandom(8)
-    hex_dig = hashlib.sha256(password).hexdigest()
+    cursor = db.cursor()
 
-    c = db.cursor()
-    c.execute("SELECT participant_id FROM participants WHERE username = %s AND password = %s", (username, hex_dig))
+    # Grab the salt for that user
+    cursor.execute("SELECT salt FROM participants WHERE username = %s", (username))
+    salt = cursor.fetchone()
+
+    # Create the hashed password
+    hex_dig = hashlib.sha256(salt[0] + password).hexdigest()
+
+    cursor.execute("SELECT participant_id FROM participants WHERE username = %s AND password = %s", (username, hex_dig))
                                      
-    ret = c.fetchone()
+    ret = cursor.fetchone()
     if ret == None:
         jsonRet = {}
         jsonRet['participant_id'] = 0;
