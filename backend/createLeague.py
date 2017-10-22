@@ -3,8 +3,8 @@ from _mysql import Error
 import sys
 import os
 
-# createLeague takes in the username, list of rules, max players for the league and the name in the 3 letter abbreviation
-
+# createLeague takes in the username, league name, list of rules, max players for the league and the name in the 3 letter abbreviation
+# inserts into league as well as the intermediary table -> league_roster
 
 def createLeague(username, leagueName, rulesList, maxPlayers, sportID):
     
@@ -30,6 +30,17 @@ def createLeague(username, leagueName, rulesList, maxPlayers, sportID):
         query = "INSERT INTO league(league_name, commissioner_id, rules, max_players, sport_id) VALUES(%s, %s, %s, %s, %s)"
         cursor.execute(query, (leagueName, participantID[0], rulesList, maxPlayers, sportID))
         db.commit()
+        
+        query = "SELECT LAST_INSERT_ID()"
+        cursor.execute(query)
+        
+        
+        leagueID = cursor.fetchone()
+
+        query = "INSERT INTO league_roster(participant_id, league_id) VALUES(%s, %s)"
+        cursor.execute(query, (participantID[0], leagueID[0]))
+        db.commit()
+
     except TypeError:
         print "Something went wrong.."
     
