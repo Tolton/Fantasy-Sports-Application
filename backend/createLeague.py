@@ -27,19 +27,27 @@ def createLeague(username, leagueName, rulesList, maxPlayers, sportID):
     participantID = cursor.fetchone()
     
     try:
-        query = "INSERT INTO league(league_name, commissioner_id, rules, max_players, sport_id) VALUES(%s, %s, %s, %s, %s)"
-        cursor.execute(query, (leagueName, participantID[0], rulesList, maxPlayers, sportID))
-        db.commit()
+        # Will print League Name taken if there already exists a league name of the same name in the table
+        cursor.execute("SELECT COUNT(league_name) FROM league WHERE league_name = %s", leagueName)
+        ret = cursor.fetchone()
+        if ret[0] > 0:
+            print "League Name taken"
+        else:
+    
         
-        query = "SELECT LAST_INSERT_ID()"
-        cursor.execute(query)
+            query = "INSERT INTO league(league_name, commissioner_id, rules, max_players, sport_id) VALUES(%s, %s, %s, %s, %s)"
+            cursor.execute(query, (leagueName, participantID[0], rulesList, maxPlayers, sportID))
+            db.commit()
+        
+            query = "SELECT LAST_INSERT_ID()"
+            cursor.execute(query)
         
         
-        leagueID = cursor.fetchone()
+            leagueID = cursor.fetchone()
 
-        query = "INSERT INTO league_roster(participant_id, league_id) VALUES(%s, %s)"
-        cursor.execute(query, (participantID[0], leagueID[0]))
-        db.commit()
+            query = "INSERT INTO league_roster(participant_id, league_id) VALUES(%s, %s)"
+            cursor.execute(query, (participantID[0], leagueID[0]))
+            db.commit()
 
     except TypeError:
         print "Something went wrong.."
