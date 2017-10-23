@@ -99,6 +99,7 @@
             this.txtUsername.ForeColor = System.Drawing.Color.Gray;
             this.txtUsername.isPassword = false;
             this.txtUsername.Location = new System.Drawing.Point(227, 34);
+            this.txtUsername.MaxLength = 30;
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.PlaceHolderText = "";
             this.txtUsername.Size = new System.Drawing.Size(228, 26);
@@ -110,6 +111,7 @@
             this.txtPassword.ForeColor = System.Drawing.Color.Gray;
             this.txtPassword.isPassword = true;
             this.txtPassword.Location = new System.Drawing.Point(227, 66);
+            this.txtPassword.MaxLength = 30;
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PlaceHolderText = "";
             this.txtPassword.Size = new System.Drawing.Size(228, 26);
@@ -121,6 +123,7 @@
             this.txtPasswordConfirm.ForeColor = System.Drawing.Color.Gray;
             this.txtPasswordConfirm.isPassword = true;
             this.txtPasswordConfirm.Location = new System.Drawing.Point(227, 98);
+            this.txtPasswordConfirm.MaxLength = 30;
             this.txtPasswordConfirm.Name = "txtPasswordConfirm";
             this.txtPasswordConfirm.PlaceHolderText = "";
             this.txtPasswordConfirm.Size = new System.Drawing.Size(228, 26);

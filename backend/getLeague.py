@@ -22,14 +22,12 @@ def getLeague(username):
     cursor = db.cursor()
 
     # get the participant_id
-    query = "SELECT participant_id FROM participants WHERE username = %s"
-    cursor.execute(query, username)
+    cursor.execute("SELECT participant_id FROM participants WHERE username='{0}'".format(username))
     
-    participantID = cursor.fetchone()
+    participantID = cursor.fetchone()[0]
 
     # get the league_id
-    query = "SELECT league_id FROM league_roster WHERE participant_id = %s"
-    cursor.execute(query, participantID)
+    cursor.execute("SELECT league_id FROM league_roster WHERE participant_id={0}".format(participantID))
     
     leagueID = cursor.fetchall()
 
@@ -37,8 +35,7 @@ def getLeague(username):
     jsonRet = {}
     i = 0
     for row in leagueID:
-        query = "SELECT * FROM league WHERE league_id = %s"
-        cursor.execute(query, row[0])
+        cursor.execute("SELECT * FROM league WHERE league_id={0}".format(row[0]))
 
         jsonRet[i] = cursor.fetchone()
         i = i + 1

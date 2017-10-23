@@ -23,13 +23,14 @@ def participantLogin(username, password):
     cursor = db.cursor()
 
     # Grab the salt for that user
-    cursor.execute("SELECT salt FROM participants WHERE username = %s", (username))
+    cursor.execute('SELECT salt FROM participants WHERE username="{0}"'.format(username))
     salt = cursor.fetchone()
 
     # Create the hashed password
     hex_dig = hashlib.sha256(salt[0] + password).hexdigest()
+    print hex_dig
 
-    cursor.execute("SELECT participant_id FROM participants WHERE username = %s AND password = %s", (username, hex_dig))
+    cursor.execute('SELECT participant_id FROM participants WHERE username="{0}" AND password="{1}"'.format(username, hex_dig))
                                      
     ret = cursor.fetchone()
     if ret == None:

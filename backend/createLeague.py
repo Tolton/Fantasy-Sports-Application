@@ -20,21 +20,19 @@ def createLeague(username, leagueName, leaguePassword, rulesList, maxPlayers, sp
 
     cursor = db.cursor()
 
-    query = "SELECT participant_id FROM participants WHERE username = %s"
-    cursor.execute(query, username)
+    cursor.execute("SELECT participant_id FROM participants WHERE username='{0}'".format(username))
 
     participantID = cursor.fetchone()
     
     
         # Will print League Name taken if there already exists a league name of the same name in the table
-    cursor.execute("SELECT COUNT(league_name) FROM league WHERE league_name = %s", leagueName)
+    cursor.execute("SELECT COUNT(league_name) FROM league WHERE league_name='{0}'".format(leagueName))
     ret = cursor.fetchone()
     if ret[0] > 0:
         print "League Name taken"
     else:
     
-        query = "INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id) VALUES(%s, %s, %s, %s, %s, %s)"
-        cursor.execute(query, (leagueName, leaguePassword, participantID[0], rulesList, maxPlayers, sportID))
+        cursor.execute("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id) VALUES('{0}','{1}',{2},'{3}',{4},'{5}')".format(leagueName, leaguePassword, participantID[0], rulesList, maxPlayers, sportID))
         db.commit()
         
         query = "SELECT LAST_INSERT_ID()"
@@ -45,8 +43,7 @@ def createLeague(username, leagueName, leaguePassword, rulesList, maxPlayers, sp
             
         teamName = "My Team"
 
-        query = "INSERT INTO league_roster(participant_id, league_id, team_name) VALUES(%s, %s, %s)"
-        cursor.execute(query, (participantID[0], leagueID[0], teamName))
+        cursor.execute("INSERT INTO league_roster(participant_id, league_id, team_name) VALUES({0},{1},'{2}')".format(participantID[0], leagueID[0], teamName))
         db.commit()
 
     

@@ -27,40 +27,43 @@ namespace FantasySportsApplication
             splashForm.Show();
         }
 
-        private void lblMyTeam_MouseEnter(object sender, EventArgs e)
-        {
-            lblMyTeam.ForeColor = Color.LightBlue;
-        }
-
-        private void lblMyTeam_MouseLeave(object sender, EventArgs e)
-        {
-            lblMyTeam.ForeColor = Color.White;
-        }
-
         private void frmMain_Load(object sender, EventArgs e)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.mysportsfeeds.com/v1.1/pull/nhl/2016-2017/cumulative_player_stats.json");
-            request.Credentials = new NetworkCredential("Tolton15", "sportsApp123");
-            WebResponse response = request.GetResponse();
-            Stream responseStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
-            string json = reader.ReadToEnd();
-            dynamic obj = JsonConvert.DeserializeObject(json);
-            foreach (var playerentry in obj.cumulativeplayerstats.playerstatsentry)
+
+        }
+
+        private void tbctrlMain_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            Brush _textBrush;
+
+            // Get the item from the collection.
+            TabPage _tabPage = tbctrlMain.TabPages[e.Index];
+
+            // Get the real bounds for the tab rectangle.
+            Rectangle _tabBounds = tbctrlMain.GetTabRect(e.Index);
+
+            if (e.State == DrawItemState.Selected)
             {
-                dgvPlayers.Rows.Add(playerentry.player.Position, playerentry.player.FirstName + " " + playerentry.player.LastName, playerentry.stats.stats.Goals["#text"], playerentry.stats.stats.Assists["#text"], playerentry.stats.stats.Points["#text"]);
+
+                // Draw a different background color, and don't paint a focus rectangle.
+                _textBrush = new SolidBrush(Color.Red);
+                g.FillRectangle(Brushes.Gray, e.Bounds);
             }
-        }
+            else
+            {
+                _textBrush = new System.Drawing.SolidBrush(e.ForeColor);
+                e.DrawBackground();
+            }
 
-        private void dgvPlayers_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            picMugshot.ImageLocation = "http://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=" + (dgvPlayers.SelectedCells[1].Value).ToString().Replace(' ','-');
-        }
+            // Use our own font.
+            Font _tabFont = new Font("Arial", (float)18.0, FontStyle.Bold, GraphicsUnit.Pixel);
 
-        private void dgvPlayers_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            lstPlayers.Items.Add(dgvPlayers.SelectedCells[1].Value);
-            dgvPlayers.Rows.Remove(dgvPlayers.SelectedRows[0]);
+            // Draw string. Center the text.
+            StringFormat _stringFlags = new StringFormat();
+            _stringFlags.Alignment = StringAlignment.Center;
+            _stringFlags.LineAlignment = StringAlignment.Center;
+            g.DrawString(_tabPage.Text, _tabFont, _textBrush, _tabBounds, new StringFormat(_stringFlags));
         }
     }
 }

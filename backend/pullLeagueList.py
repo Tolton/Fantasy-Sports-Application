@@ -38,4 +38,4 @@ def pullLeagueList(username):
     db.close()
 
 
-pullLeagueList(sys.argv[1])
+pullLeagueList("test")

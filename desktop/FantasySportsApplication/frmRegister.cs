@@ -2,14 +2,47 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.Linq;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace FantasySportsApplication
 {
     public partial class frmRegister : Form
     {
+        private string saltedPassword;
+        private string salt;
+        static Random random = new Random();
+
         public frmRegister()
         {
             InitializeComponent();
+        }
+
+        public static String sha256_hash(String value)
+        {
+            StringBuilder Sb = new StringBuilder();
+
+            using (SHA256 hash = SHA256Managed.Create())
+            {
+                Encoding enc = Encoding.UTF8;
+                Byte[] result = hash.ComputeHash(enc.GetBytes(value));
+
+                foreach (Byte b in result)
+                    Sb.Append(b.ToString("x2"));
+            }
+
+            return Sb.ToString();
+        }
+
+        public static string GetRandomHexNumber(int digits)
+        {
+            byte[] buffer = new byte[digits / 2];
+            random.NextBytes(buffer);
+            string result = String.Concat(buffer.Select(x => x.ToString("X2")).ToArray());
+            if (digits % 2 == 0)
+                return result;
+            return result + random.Next(16).ToString("X");
         }
 
         private void btnRegister_Click(object sender, EventArgs e)
@@ -34,7 +67,9 @@ namespace FantasySportsApplication
                 }
                 try
                 {
-                    MySqlCommand cmdRegister = new MySqlCommand(String.Format("INSERT INTO participants(username,password) VALUES('{0}','{1}')", txtUsername.Text, txtPassword.Text), cnn);
+                    salt = GetRandomHexNumber(32);
+                    saltedPassword = sha256_hash(salt + txtPassword.Text);
+                    MySqlCommand cmdRegister = new MySqlCommand(String.Format("INSERT INTO participants(username,password,salt) VALUES('{0}','{1}','{2}');", txtUsername.Text, saltedPassword, salt), cnn);
                     cmdRegister.ExecuteNonQuery();
                     lblError.Text = "Success";
                     tmrSuccess.Start();
