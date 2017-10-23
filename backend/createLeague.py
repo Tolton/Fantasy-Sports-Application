@@ -1,7 +1,6 @@
 import MySQLdb
 from _mysql import Error
 import sys
-import os
 
 # createLeague takes in the username, league name, list of rules, max players for the league and the name in the 3 letter abbreviation
 # inserts into league as well as the intermediary table -> league_roster
@@ -44,9 +43,11 @@ def createLeague(username, leagueName, rulesList, maxPlayers, sportID):
         
         
             leagueID = cursor.fetchone()
+            
+            teamName = "My Team"
 
-            query = "INSERT INTO league_roster(participant_id, league_id) VALUES(%s, %s)"
-            cursor.execute(query, (participantID[0], leagueID[0]))
+            query = "INSERT INTO league_roster(participant_id, league_id, team_name) VALUES(%s, %s, %s)"
+            cursor.execute(query, (participantID[0], leagueID[0], teamName))
             db.commit()
 
     except TypeError:
