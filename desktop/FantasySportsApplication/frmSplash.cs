@@ -12,8 +12,6 @@ namespace FantasySportsApplication
         public string CurrentUser = null;
         public int CurrentID = 0;
 
-        private string saltedPassword;
-
         public frmSplash()
         {
             InitializeComponent();
@@ -53,68 +51,9 @@ namespace FantasySportsApplication
         //Login Button clicked
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            
-            //Establish a connection to the database
-            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            try
-            {
-                //Get the password salt
-                cnn.Open();
-                MySqlCommand cmdGetSalt = new MySqlCommand(String.Format("SELECT salt FROM participants WHERE username='{0}';", txtUsername.Text), cnn);
-                MySqlDataReader rdr = cmdGetSalt.ExecuteReader();
-                while (rdr.Read())
-                {
-                    if (rdr["salt"] != null)
-                    {
-                        saltedPassword = (sha256_hash(rdr["salt"] + txtPassword.Text));
-                    }
-                }
-                rdr.Close();
-                cnn.Close();
+            if (Login(txtUsername.Text, txtPassword.Text))
+                PullLeagues(txtUsername.Text);
 
-
-                //Attempt to login
-                cnn.Open();
-                MySqlCommand cmdLogin = new MySqlCommand(String.Format("SELECT participant_id FROM participants WHERE username='{0}' AND password='{1}';", txtUsername.Text, saltedPassword), cnn);
-                rdr = cmdLogin.ExecuteReader();
-                bool loginSuccess = false;
-                while (rdr.Read())
-                {
-                    if (rdr["participant_id"] != null)
-                    {
-                        //Successful Login
-                        loginSuccess = true;
-                        CurrentUser = txtUsername.Text;
-                        CurrentID = (int)rdr["participant_id"];
-                        lblWelcome.Text = "Welcome,  " + CurrentUser;
-                    }
-                }
-                if (!loginSuccess)
-                {
-                    //Failed Login
-                    lblLoginFail.ForeColor = Color.FromArgb(0, 0, 0);
-                    tmrLoginFail.Start();
-                }
-                else
-                {
-                    rdr.Close();
-                    MySqlCommand cmdLeagues = new MySqlCommand(String.Format("SELECT league_id FROM league_roster WHERE participant_id={0};", CurrentID), cnn);
-                    rdr = cmdLeagues.ExecuteReader();
-                    while (rdr.Read())
-                    {
-                        btnLogout.Text = rdr[0].ToString();
-                    }
-                    tbctrlLogin.SelectedTab = tbpgSignedIn;
-                }
-               
-                rdr.Close();
-                cnn.Close();
-            }
-            //Problem connecting to the database
-            catch
-            {
-                MessageBox.Show("Cannot connect to the login server at this time. Please try again later.","Connection Error");
-            }
             txtPassword.Text = null;
             txtPassword.Focus();
         }
@@ -172,6 +111,99 @@ namespace FantasySportsApplication
         private void picJoin_Click(object sender, EventArgs e)
         {
             //Join League
+        }
+
+        private bool Login (string username, string password)
+        {
+            string saltedPassword = null;
+            MySqlCommand cmdSql;
+            MySqlDataReader rdr;
+
+            //Attempt to connect to the login server
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            try
+            {
+                cnn.Open();
+            }
+            catch
+            {
+                MessageBox.Show("Cannot connect to the login server at this time. Please try again later.", "Connection Error");
+            }
+            
+            //Grab the salt from the database
+            cmdSql = new MySqlCommand(String.Format("SELECT salt FROM participants WHERE username='{0}';", txtUsername.Text), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            try //Username exists
+            {
+                //Salt the password
+                saltedPassword = (sha256_hash(rdr["salt"] + txtPassword.Text));
+            }
+            catch //Username does not exist
+            {
+                lblLoginFail.ForeColor = Color.Black;
+                tmrLoginFail.Start();
+                return false;
+            }
+            rdr.Close();
+
+            //Attempt to login
+            cmdSql = new MySqlCommand(String.Format("SELECT participant_id FROM participants WHERE username='{0}' AND password='{1}';", txtUsername.Text, saltedPassword), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            //Successful Login
+            try
+            {
+                CurrentUser = txtUsername.Text;
+                CurrentID = (int)rdr["participant_id"];
+                lblWelcome.Text = "Welcome,  " + CurrentUser;
+            }
+            //Failed Login
+            catch
+            {
+                lblLoginFail.ForeColor = Color.Black;
+                tmrLoginFail.Start();
+                return false;
+            }
+            rdr.Close();
+            cnn.Close();
+            return true;
+        }
+
+        private void PullLeagues (string username)
+        {
+            //Clear combobox of League Names
+            cmboLeague.Items.Clear();
+
+            //Open connection to pull list of League IDs
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league_roster WHERE participant_id={0};", CurrentID), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+
+            //Open connection to pull list of League Names
+            MySqlConnection cnn2 = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn2.Open();
+            MySqlCommand cmdSql2;
+            MySqlDataReader rdr2;
+
+            //Show the No Leagues error
+            tbctrlChooseLeague.SelectedTab = tbpgNoLeagues;
+
+            //For each League ID, add the League Name to the combobox
+            while (rdr.Read())
+            {
+                //Show league selection combobox
+                tbctrlChooseLeague.SelectedTab = tbpgChooseLeague;
+                cmdSql2 = new MySqlCommand(String.Format("SELECT league_name FROM league WHERE league_id={0};", (int)rdr[0]), cnn2);
+                rdr2 = cmdSql2.ExecuteReader();
+                rdr2.Read();
+                cmboLeague.Items.Add(rdr2[0].ToString());
+                rdr2.Close();
+            }
+
+            //Switch to signed in mode
+            tbctrlLogin.SelectedTab = tbpgSignedIn;
         }
     }
 }

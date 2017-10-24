@@ -40,6 +40,8 @@ def createLeague(username, leagueName, leaguePassword, rulesList, maxPlayers, sp
         
     
         leagueID = cursor.fetchone()
+        print leagueID
+        exit
             
         teamName = "My Team"
 

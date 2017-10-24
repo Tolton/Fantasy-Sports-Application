@@ -28,49 +28,7 @@ namespace FantasySportsApplication
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            lblError.ForeColor = Color.Black;
-            if (txtLeagueName.Text == "")
-            {
-                lblError.Text = "ERROR: 'League Name' cannot be empty.";
-                tmrError.Start();
-            }
-            else if (txtLeaguePassword.Text == "")
-            {
-                lblError.Text = "ERROR: 'League Password' cannot be empty.";
-                tmrError.Start();
-            }
-            else if (cmboSport.SelectedIndex == -1)
-            {
-                lblError.Text = "ERROR: 'Sport' cannot be empty.";
-                tmrError.Start();
-            }
-            else if (txtTeamName.Text == "")
-            {
-                lblError.Text = "ERROR: 'My Team Name' cannot be empty.";
-                tmrError.Start();
-            }
-            else
-            {
-                MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-                try
-                {
-                    cnn.Open();
-                    MySqlCommand cmdCreateLeague = new MySqlCommand(String.Format("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id) VALUES('{0}', '{1}', {2}, 'default', {3}, '{4}');", txtLeagueName.Text, txtLeaguePassword.Text, CurrentID, numMaxPlayers.Value, cmboSport.Text.ToLower() ), cnn);
-                    cmdCreateLeague.ExecuteNonQuery();
-                    MySqlCommand cmdSelectLeagueID = new MySqlCommand("SELECT LAST_INSERT_ID();");
-                    MySqlDataReader rdr = cmdSelectLeagueID.ExecuteReader();
-                    while (rdr.Read())
-                    {
-                        
-                    }
-                }
-                //Problem connecting to the database
-                catch
-                {
-                    lblError.Text = "ERROR: The League Name '" + txtLeagueName.Text + "' is already taken.";
-                    tmrError.Start();
-                }
-            }
+            CreateLeague(CurrentID, txtLeagueName.Text, txtLeaguePassword.Text, "default", (int)numMaxPlayers.Value, cmboSport.Text, txtTeamName.Text);
         }
 
         private void frmCreateLeague_Load(object sender, EventArgs e)
@@ -83,6 +41,58 @@ namespace FantasySportsApplication
             lblError.ForeColor = Color.FromArgb(lblError.ForeColor.R + 15, 0, 0);
             if (lblError.ForeColor.R == 255)
                 tmrError.Stop();
+        }
+
+        private void CreateLeague (int userID, string leagueName, string leaguePassword, string rulesList, int maxPlayers, string sportID, string teamName)
+        {
+            int leagueId;
+
+            //Reset the error label
+            lblError.ForeColor = Color.Black;
+
+            //Throw error if any of the fields are blank
+            if (txtLeagueName.Text == "") //blank league name
+            {
+                lblError.Text = "ERROR: 'League Name' cannot be empty.";
+                tmrError.Start();
+            }
+            else if (txtLeaguePassword.Text == "") //blank league password
+            {
+                lblError.Text = "ERROR: 'League Password' cannot be empty.";
+                tmrError.Start();
+            }
+            else if (cmboSport.SelectedIndex == -1) //blank sport
+            {
+                lblError.Text = "ERROR: 'Sport' cannot be empty.";
+                tmrError.Start();
+            }
+            else if (txtTeamName.Text == "") //blank team name
+            {
+                lblError.Text = "ERROR: 'My Team Name' cannot be empty.";
+                tmrError.Start();
+            }
+            else
+            {
+                //Open connection to the database
+                MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+                cnn.Open();
+                
+                //Insert the league information
+                MySqlCommand cmdSql = new MySqlCommand(String.Format("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id) VALUES('{0}','{1}',{2},'default',{3},'{4}');", leagueName, leaguePassword, userID, maxPlayers, sportID.ToLower()), cnn);
+                cmdSql.ExecuteNonQuery();
+                
+                //Grab the new league ID
+                cmdSql = new MySqlCommand("SELECT LAST_INSERT_ID();", cnn);
+                MySqlDataReader rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                leagueId = Convert.ToInt32(rdr[0].ToString());
+                rdr.Close();
+
+                //Update the league roster table
+                cmdSql = new MySqlCommand(String.Format("INSERT INTO league_roster(participant_id, league_id, team_name) VALUES({0},{1},'{2}');", CurrentID, leagueId, teamName), cnn);
+                cmdSql.ExecuteNonQuery();
+                cnn.Close();
+            }
         }
     }
 }

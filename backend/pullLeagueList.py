@@ -19,17 +19,17 @@ def pullLeagueList(username):
     
     cursor = db.cursor()
     
-    cursor.execute("SELECT participant_id FROM participants WHERE username = %s", username)
+    cursor.execute("SELECT participant_id FROM participants WHERE username='{0}'".format(username))
     participantID = cursor.fetchone()
 
 
-    cursor.execute("SELECT league_id FROM league_roster WHERE participant_id = %s", participantID)
+    cursor.execute("SELECT league_id FROM league_roster WHERE participant_id={0}".format(participantID[0]))
     leagueID = cursor.fetchall()
     
     jsonRet = {}
     i = 0
     for row in leagueID:
-        cursor.execute("SELECT league_name FROM league WHERE league_id = %s", row[0])
+        cursor.execute("SELECT league_name FROM league WHERE league_id=1")
         
         jsonRet[i] = cursor.fetchone()
         i = i + 1
@@ -38,4 +38,4 @@ def pullLeagueList(username):
     db.close()
 
 
-pullLeagueList("test")
+pullLeagueList(sys.argv[1])
