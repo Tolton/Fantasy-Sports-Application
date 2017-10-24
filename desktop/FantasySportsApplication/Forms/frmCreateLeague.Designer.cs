@@ -43,6 +43,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.lblError = new System.Windows.Forms.Label();
             this.tmrError = new System.Windows.Forms.Timer(this.components);
+            this.tmrSuccess = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numMaxPlayers)).BeginInit();
             this.SuspendLayout();
             // 
@@ -193,6 +194,10 @@
             this.tmrError.Interval = 50;
             this.tmrError.Tick += new System.EventHandler(this.tmrError_Tick);
             // 
+            // tmrSuccess
+            // 
+            this.tmrSuccess.Tick += new System.EventHandler(this.tmrSuccess_Tick);
+            // 
             // frmCreateLeague
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -238,5 +243,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblError;
         private System.Windows.Forms.Timer tmrError;
+        private System.Windows.Forms.Timer tmrSuccess;
     }
 }

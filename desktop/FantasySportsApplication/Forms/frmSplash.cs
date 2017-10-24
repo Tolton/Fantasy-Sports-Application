@@ -205,5 +205,6 @@ namespace FantasySportsApplication
             //Switch to signed in mode
             tbctrlLogin.SelectedTab = tbpgSignedIn;
         }
+
     }
 }

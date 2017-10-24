@@ -98,7 +98,6 @@ namespace FantasySportsApplication
                 tmrSuccess.Stop();
                 this.Close();
             }
-                
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
