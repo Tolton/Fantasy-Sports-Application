@@ -253,6 +253,7 @@
             this.btnEnterLeague.TabIndex = 2;
             this.btnEnterLeague.Text = "Go!";
             this.btnEnterLeague.UseVisualStyleBackColor = true;
+            this.btnEnterLeague.Click += new System.EventHandler(this.btnEnterLeague_Click);
             // 
             // cmboLeague
             // 

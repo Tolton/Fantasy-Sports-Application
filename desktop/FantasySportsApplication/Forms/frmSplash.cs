@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.Text;
 using System.Security.Cryptography;
+using FantasySportsApplication.Forms;
 
 namespace FantasySportsApplication
 {
@@ -110,7 +111,10 @@ namespace FantasySportsApplication
 
         private void picJoin_Click(object sender, EventArgs e)
         {
-            //Join League
+            frmJoinLeague formJoinLeague = new frmJoinLeague();
+            formJoinLeague.CurrentUser = CurrentUser;
+            formJoinLeague.CurrentID = CurrentID;
+            formJoinLeague.Show();
         }
 
         private bool Login (string username, string password)
@@ -206,5 +210,12 @@ namespace FantasySportsApplication
             tbctrlLogin.SelectedTab = tbpgSignedIn;
         }
 
+        private void btnEnterLeague_Click(object sender, EventArgs e)
+        {
+            if (cmboLeague.SelectedIndex != -1)
+            {
+                Console.WriteLine("Test");
+            }
+        }
     }
 }

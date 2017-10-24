@@ -33,7 +33,7 @@
             this.txtTeamName = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnCreate = new System.Windows.Forms.Button();
+            this.btnJoin = new System.Windows.Forms.Button();
             this.txtLeaguePassword = new System.Windows.Forms.TextBox();
             this.txtLeagueName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -77,15 +77,17 @@
             this.btnCancel.TabIndex = 23;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnCreate
+            // btnJoin
             // 
-            this.btnCreate.Location = new System.Drawing.Point(87, 195);
-            this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(121, 32);
-            this.btnCreate.TabIndex = 22;
-            this.btnCreate.Text = "Join";
-            this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnJoin.Location = new System.Drawing.Point(87, 195);
+            this.btnJoin.Name = "btnJoin";
+            this.btnJoin.Size = new System.Drawing.Size(121, 32);
+            this.btnJoin.TabIndex = 22;
+            this.btnJoin.Text = "Join";
+            this.btnJoin.UseVisualStyleBackColor = true;
+            this.btnJoin.Click += new System.EventHandler(this.btnJoin_Click);
             // 
             // txtLeaguePassword
             // 
@@ -123,9 +125,14 @@
             this.label1.Text = "League Name:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // tmrSuccess
+            // 
+            this.tmrSuccess.Tick += new System.EventHandler(this.tmrSuccess_Tick);
+            // 
             // tmrFailure
             // 
             this.tmrFailure.Interval = 50;
+            this.tmrFailure.Tick += new System.EventHandler(this.tmrFailure_Tick);
             // 
             // frmJoinLeague
             // 
@@ -137,7 +144,7 @@
             this.Controls.Add(this.txtTeamName);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnCreate);
+            this.Controls.Add(this.btnJoin);
             this.Controls.Add(this.txtLeaguePassword);
             this.Controls.Add(this.txtLeagueName);
             this.Controls.Add(this.label2);
@@ -155,7 +162,7 @@
         private System.Windows.Forms.TextBox txtTeamName;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnCreate;
+        private System.Windows.Forms.Button btnJoin;
         private System.Windows.Forms.TextBox txtLeaguePassword;
         private System.Windows.Forms.TextBox txtLeagueName;
         private System.Windows.Forms.Label label2;
