@@ -10,7 +10,7 @@ import json
 # It then inserts into the roster table
 # PLAYER NAME MUST BE IN FORM OF "FName LName"
 
-def addToRoster(username, teamName, playerName):
+def addToRoster(leagueName, username, playerName):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -32,8 +32,10 @@ def addToRoster(username, teamName, playerName):
         print "Could not find that user."
         db.close()
         sys.exit(0)
+    cursor.execute("SELECT league_id FROM league WHERE league_name = %s", [leagueName])
+    leagueID = cursor.fetchone()
 
-    cursor.execute("SELECT league_roster_id, league_id FROM league_roster WHERE participant_id = %s AND team_name = %s", (participantID[0], teamName))
+    cursor.execute("SELECT league_roster_id FROM league_roster WHERE participant_id = %s AND league_id = %s", (participantID[0], leagueID[0]))
     leagueRosterID = cursor.fetchall()
         # check if the team name entered is wrong
     if cursor.rowcount == 0:
@@ -41,14 +43,14 @@ def addToRoster(username, teamName, playerName):
         db.close()
         sys.exit(0)
 
-    cursor.execute("SELECT sport_id, max_players FROM league WHERE league_id = %s", [leagueRosterID[0][1]])
+    cursor.execute("SELECT sport_id, max_players FROM league WHERE league_id = %s", [leagueRosterID[0]])
     ret = cursor.fetchall()
     sportID = ret[0][0]
     maxPlayers = ret[0][1]
 
 
 # check if they already have the max players on the team
-    cursor.execute("SELECT COUNT(player_name) FROM roster WHERE league_roster_id = %s", [leagueRosterID[0][0]])
+    cursor.execute("SELECT COUNT(player_name) FROM roster WHERE league_roster_id = %s", [leagueRosterID[0]])
     playCount = cursor.fetchone()
     if playCount[0] >= maxPlayers:
         print "Adding too many players."
@@ -57,7 +59,7 @@ def addToRoster(username, teamName, playerName):
 
 
 # check if the player is already taken
-    cursor.execute("SELECT league_roster_id FROM league_roster WHERE league_id = %s", [leagueRosterID[0][1]])
+    cursor.execute("SELECT league_roster_id FROM league_roster WHERE league_id = %s", [leagueID])
     allUsers = cursor.fetchall()
 
     for row in allUsers:
@@ -102,11 +104,11 @@ def addToRoster(username, teamName, playerName):
 
     points = 0
 
-    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport, points, date_acquired) VALUES(%s, %s, %s, %s, %s)", (leagueRosterID[0][0], playerName, sportID, points, dateAdded))
+    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport, points, date_acquired) VALUES(%s, %s, %s, %s, %s)", (leagueRosterID[0], playerName, sportID, points, dateAdded))
 
 
     db.commit()
     db.close()
 
-#username, teamName, playerName
+# leagueName, username, playerName
 addToRoster(sys.argv[1], sys.argv[2], sys.argv[3])
