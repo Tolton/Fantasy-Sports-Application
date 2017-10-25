@@ -25,7 +25,7 @@ def createParticipant(username, password):
     salt = os.urandom(16).encode('hex')
 
     # Avoiding duplicate salts(yes I know this will almost never happen.. except during the Alpha -.-)
-    cursor.execute("SELECT COUNT(username) FROM participants WHERE salt = %s", salt)
+    cursor.execute("SELECT COUNT(username) FROM participants WHERE salt = %s", [salt])
     ret = cursor.fetchone()
     while ret[0] > 0:
         salt = os.urandom(16).encode('hex')
@@ -37,7 +37,7 @@ def createParticipant(username, password):
     hex_dig = hash_object.hexdigest()
 
     # Avoiding duplicate usernames(if there is 1 or more usernames the same returned Count will be > 0)
-    cursor.execute("SELECT COUNT(username) FROM participants WHERE username = %s", username)
+    cursor.execute("SELECT COUNT(username) FROM participants WHERE username = %s", [username])
     ret = cursor.fetchone()
     if ret[0] > 0:
         print "Username is taken"
