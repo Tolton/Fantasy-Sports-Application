@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
@@ -15,6 +12,12 @@ namespace FantasySportsApplication
 {
     public partial class frmMain : Form
     {
+        public int LeagueID { get; set; }
+        public int CurrentID { get; set; }
+        public string CurrentUser { get; set; }
+        public string LeagueName { get; set; }
+        public string TeamName { get; set; }
+
         public frmMain()
         {
             InitializeComponent();
@@ -178,6 +181,75 @@ namespace FantasySportsApplication
 
         }
 
+        private void PopulateStats(Player player)
+        {
+            //Player stats
+            if (player.Position != "G")
+            {
+                lblPlayer_GamesPlayed.Text = player.GamesPlayed.ToString();
+                lblPlayer_Goals.Text = player.Goals.ToString();
+                lblPlayer_Assists.Text = player.Assists.ToString();
+                lblPlayer_Points.Text = player.Points.ToString();
+                lblPlayer_HatTricks.Text = player.HatTricks.ToString();
+                lblPlayer_Penalties.Text = player.Penalties.ToString();
+                lblPlayer_PenaltyMinutes.Text = player.PenaltyMinutes.ToString();
+                lblPlayer_PowerplayGoals.Text = player.PowerplayGoals.ToString();
+                lblPlayer_PowerplayAssists.Text = player.PowerplayAssists.ToString();
+                lblPlayer_PowerplayPoints.Text = player.PowerplayPoints.ToString();
+                lblPlayer_ShorthandedGoals.Text = player.ShorthandedGoals.ToString();
+                lblPlayer_ShorthandedAssists.Text = player.ShorthandedAssists.ToString();
+                lblPlayer_ShorthandedPoints.Text = player.ShorthandedPoints.ToString();
+                lblPlayer_GameWinningGoals.Text = player.GameWinningGoals.ToString();
+                lblPlayer_GameTyingGoals.Text = player.GameTyingGoals.ToString();
+
+                lblPlayer_PlusMinus.Text = player.PlusMinus.ToString();
+                lblPlayer_Shots.Text = player.Shots.ToString();
+                lblPlayer_ShotPercentage.Text = player.ShotPercentage.ToString();
+                lblPlayer_Hits.Text = player.Hits.ToString();
+                lblPlayer_Faceoffs.Text = player.Faceoffs.ToString();
+                lblPlayer_FaceoffWins.Text = player.FaceoffWins.ToString();
+                lblPlayer_FaceoffLosses.Text = player.FaceoffLosses.ToString();
+                lblPlayer_FaceoffPercent.Text = player.FaceoffPercent.ToString();
+
+                tbctrlStats.SelectedTab = tbpgPlayers;
+            }
+            //Goalie stats
+            else
+            {
+                lblGoalie_GamesPlayed.Text = player.GamesPlayed.ToString();
+                lblGoalie_Goals.Text = player.Goals.ToString();
+                lblGoalie_Assists.Text = player.Assists.ToString();
+                lblGoalie_Points.Text = player.Points.ToString();
+                lblGoalie_HatTricks.Text = player.HatTricks.ToString();
+                lblGoalie_Penalties.Text = player.Penalties.ToString();
+                lblGoalie_PenaltyMinutes.Text = player.PenaltyMinutes.ToString();
+                lblGoalie_PowerplayGoals.Text = player.PowerplayGoals.ToString();
+                lblGoalie_PowerplayAssists.Text = player.PowerplayAssists.ToString();
+                lblGoalie_PowerplayPoints.Text = player.PowerplayPoints.ToString();
+                lblGoalie_ShorthandedGoals.Text = player.ShorthandedGoals.ToString();
+                lblGoalie_ShorthandedAssists.Text = player.ShorthandedAssists.ToString();
+                lblGoalie_ShorthandedPoints.Text = player.ShorthandedPoints.ToString();
+                lblGoalie_GameWinningGoals.Text = player.GameWinningGoals.ToString();
+                lblGoalie_GameTyingGoals.Text = player.GameTyingGoals.ToString();
+
+                lblGoalie_Wins.Text = player.Wins.ToString();
+                lblGoalie_Losses.Text = player.Losses.ToString();
+                lblGoalie_OvertimeWins.Text = player.OvertimeWins.ToString();
+                lblGoalie_OvertimeLosses.Text = player.OvertimeLosses.ToString();
+                lblGoalie_GoalsAgainst.Text = player.GoalsAgainst.ToString();
+                lblGoalie_ShotsAgainst.Text = player.ShotsAgainst.ToString();
+                lblGoalie_Saves.Text = player.Saves.ToString();
+                lblGoalie_GoalsAgainstAverage.Text = player.GoalsAgainstAverage.ToString();
+                lblGoalie_SavePercentage.Text = player.SavePercentage.ToString();
+                lblGoalie_Shutouts.Text = player.Shutouts.ToString();
+                lblGoalie_GamesStarted.Text = player.GamesStarted.ToString();
+                lblGoalie_CreditForGame.Text = player.CreditForGame.ToString();
+                lblGoalie_MinutesPlayed.Text = player.MinutesPlayed.ToString();
+
+                tbctrlStats.SelectedTab = tbpgGoalies;
+            }
+        }
+
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -230,7 +302,8 @@ namespace FantasySportsApplication
             Player SelectedPlayer = PlayerList[index];
 
             lblName.Text = String.Format("#{0} - {1}",SelectedPlayer.JerseyNumber, SelectedPlayer.Name);
-            picMugshot.ImageLocation = "http://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=" + (SelectedPlayer.Name.Replace(' ','-'));
+            PopulateStats(SelectedPlayer);
+            picMugshot.ImageLocation = "http://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=" + (SelectedPlayer.Name.Replace(' ','-').Replace(".",""));
         }
     }
 }

@@ -212,9 +212,32 @@ namespace FantasySportsApplication
 
         private void btnEnterLeague_Click(object sender, EventArgs e)
         {
+            int leagueID;
+
             if (cmboLeague.SelectedIndex != -1)
             {
-                Console.WriteLine("Test");
+                MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+                cnn.Open();
+                MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league WHERE league_name='{0}';", cmboLeague.Text), cnn);
+                MySqlDataReader rdr = cmdSql.ExecuteReader();
+
+                rdr.Read();
+                frmMain formMain = new frmMain();
+                formMain.LeagueName = cmboLeague.Text;
+                leagueID = Convert.ToInt32(rdr[0].ToString());
+                formMain.LeagueID = leagueID;
+                rdr.Close();
+
+                cmdSql = new MySqlCommand(String.Format("SELECT team_name FROM league_roster WHERE league_id={0} AND participant_id={1};", leagueID, CurrentID), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                formMain.TeamName = rdr[0].ToString();
+                rdr.Close();
+
+                formMain.CurrentID = CurrentID;
+                formMain.CurrentUser = CurrentUser;
+                formMain.Show();
+                this.Hide();
             }
         }
     }
