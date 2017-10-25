@@ -4,9 +4,9 @@ import json
 import sys
 import os
 
-# getLeague takes in the username of the participant you want to get the leagues for
+# pullLeagueList takes in the username of the participant you want to get the leagues for
 # dumps the json of all leagues returned
-def getLeague(username):
+def pullLeagueList(username):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -52,4 +52,4 @@ def getLeague(username):
 
 
 #username
-getLeague(sys.argv[1])
+pullLeagueList(sys.argv[1])
