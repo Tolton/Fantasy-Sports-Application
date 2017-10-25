@@ -5,7 +5,7 @@ import json
 
 # pullRoster takes the username and the team name
 # It then pulls the list of players according to that user and their team
-def pullRoster(username, teamName):
+def pullRoster(username, teamName, leagueName):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -17,25 +17,28 @@ def pullRoster(username, teamName):
     
     except Error as e:
         return False
-    
+
     cursor = db.cursor()
 
     cursor.execute("SELECT participant_id FROM participants WHERE username = %s", [username])
     participantID = cursor.fetchone()
-    
-    cursor.execute("SELECT league_roster_id, league_id FROM league_roster WHERE participant_id = %s AND team_name = %s", (participantID[0], teamName))
-    leagueRosterID = cursor.fetchall()
 
+    cursor.execute("SELECT league_id FROM league WHERE league_name = %s", [leagueName])
+    leagueID = cursor.fetchone()
+    
+    cursor.execute("SELECT league_roster_id FROM league_roster WHERE participant_id = %s AND team_name = %s AND league_id = %s", (participantID[0], teamName, leagueID[0]))
+    leagueRosterID = cursor.fetchall()
+    
     if cursor.rowcount == 0:
         print "Could not find that team"
         sys.exit(0)
 
-    cursor.execute("SELECT sport_id FROM league WHERE league_id = %s", [leagueRosterID[0][1]])
+    cursor.execute("SELECT sport_id FROM league WHERE league_id = %s", [leagueID[0]])
     sportID = cursor.fetchone()
     
-    cursor.execute("SELECT * FROM roster WHERE league_roster_id = %s", [leagueRosterID[0][0]])
+    cursor.execute("SELECT * FROM roster WHERE league_roster_id = %s", [leagueRosterID[0]])
     playerList = cursor.fetchall()
-
+    
     jsonRet = {}
     i = 0
     for row in playerList:
@@ -48,4 +51,4 @@ def pullRoster(username, teamName):
 
 
 #username, team name
-pullRoster(sys.argv[1], sys.argv[2])
+pullRoster(sys.argv[1], sys.argv[2], sys.argv[3])
