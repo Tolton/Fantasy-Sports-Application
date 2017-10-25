@@ -1,10 +1,12 @@
 import MySQLdb
 from _mysql import Error
-import sys
 import json
+import sys
+import os
 
-# pullLeagueList takes the user name to pull all league names the user is a part of. It then prints the json
-def pullLeagueList(username):
+# getLeague takes in the username of the participant you want to get the leagues for
+# dumps the json of all leagues returned
+def getLeague(username):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -16,26 +18,38 @@ def pullLeagueList(username):
     
     except Error as e:
         return False
-    
+
     cursor = db.cursor()
+
+    # get the participant_id
+    query = "SELECT participant_id FROM participants WHERE username = %s"
+    cursor.execute(query, [username])
     
-    cursor.execute("SELECT participant_id FROM participants WHERE username='{0}'".format(username))
     participantID = cursor.fetchone()
+    if participantID == None:
+        print "Could not find that username."
+        sys.exit(0)
 
-
-    cursor.execute("SELECT league_id FROM league_roster WHERE participant_id={0}".format(participantID[0]))
+    # get the league_id
+    query = "SELECT league_id FROM league_roster WHERE participant_id = %s"
+    cursor.execute(query, participantID)
+        
     leagueID = cursor.fetchall()
-    
+        
+    # create the json of the leagues returned
     jsonRet = {}
     i = 0
     for row in leagueID:
-        cursor.execute("SELECT league_name FROM league WHERE league_id=1")
-        
+        query = "SELECT * FROM league WHERE league_id = %s"
+        cursor.execute(query, [row[0]])
+            
         jsonRet[i] = cursor.fetchone()
         i = i + 1
-    print json.dumps(jsonRet)
+    print json.dumps(jsonRet, indent = 1);
     
     db.close()
 
 
-pullLeagueList(sys.argv[1])
+
+#username
+getLeague(sys.argv[1])

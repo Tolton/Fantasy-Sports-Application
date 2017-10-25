@@ -3,7 +3,7 @@ from _mysql import Error
 import sys
 import json
 
-#
+# pullParticipantList takes the league name to pull all participant usernames from. It then prints the json
 def pullParticipantList(leagueName):
     
     userName = "teamOgre"
@@ -19,17 +19,21 @@ def pullParticipantList(leagueName):
 
     cursor = db.cursor()
     
-    cursor.execute("SELECT league_id FROM league WHERE league_name = %s", leagueName)
+    cursor.execute("SELECT league_id FROM league WHERE league_name = %s", [leagueName])
     ret = cursor.fetchone()
+    if ret == None:
+        print "Could not find that league name."
+        sys.exit(0)
+    
     leagueID = ret[0]
 
-    cursor.execute("SELECT participant_id FROM league_roster WHERE league_id = %s", leagueID)
+    cursor.execute("SELECT participant_id FROM league_roster WHERE league_id = %s", [leagueID])
     participantID = cursor.fetchall()
 
     jsonRet = {}
     i = 0
     for row in participantID:
-        cursor.execute("SELECT username FROM participants WHERE participant_id = %s", row[0])
+        cursor.execute("SELECT username FROM participants WHERE participant_id = %s", [row[0]])
 
         jsonRet[i] = cursor.fetchone()
         i = i + 1

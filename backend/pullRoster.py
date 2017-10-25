@@ -20,17 +20,20 @@ def pullRoster(username, teamName):
     
     cursor = db.cursor()
 
-    cursor.execute("SELECT participant_id FROM participants WHERE username = %s", username)
+    cursor.execute("SELECT participant_id FROM participants WHERE username = %s", [username])
     participantID = cursor.fetchone()
     
     cursor.execute("SELECT league_roster_id, league_id FROM league_roster WHERE participant_id = %s AND team_name = %s", (participantID[0], teamName))
     leagueRosterID = cursor.fetchall()
 
-    
-    cursor.execute("SELECT sport_id FROM league WHERE league_id = %s", (leagueRosterID[0][1]))
+    if cursor.rowcount == 0:
+        print "Could not find that team"
+        sys.exit(0)
+
+    cursor.execute("SELECT sport_id FROM league WHERE league_id = %s", [leagueRosterID[0][1]])
     sportID = cursor.fetchone()
     
-    cursor.execute("SELECT * FROM roster WHERE league_roster_id = %s", leagueRosterID[0][0])
+    cursor.execute("SELECT * FROM roster WHERE league_roster_id = %s", [leagueRosterID[0][0]])
     playerList = cursor.fetchall()
 
     jsonRet = {}

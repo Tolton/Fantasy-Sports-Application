@@ -1,10 +1,9 @@
 import MySQLdb
 from _mysql import Error
 import sys
-import os
 
 # joinLeague takes in the username and the league name to join. It then inserts this information into the league_roster table
-def joinLeague(username, leagueName, leaguePassword):
+def joinLeague(username, leagueName, leaguePassword, teamName):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -19,21 +18,38 @@ def joinLeague(username, leagueName, leaguePassword):
     
     cursor = db.cursor()
 
-    cursor.execute("SELECT participant_id FROM participants WHERE username = %s", username)
+# username checking
+    cursor.execute("SELECT participant_id FROM participants WHERE username = %s", [username])
     participantID = cursor.fetchone()
+    if participantID == None:
+        print "Could not find the username."
+        sys.exit(0)
 
-    cursor.execute("SELECT league_id, league_pass FROM league WHERE league_name = %s", leagueName)
-    leagueID = cursor.fetchall()
+# league and password checking
+    cursor.execute("SELECT league_id FROM league WHERE league_name = %s AND league_pass = %s", (leagueName, leaguePassword))
+    leagueID = cursor.fetchone()
+    if cursor.rowcount == 0:
+        print "Invalid league name or password."
+        sys.exit(0)
 
-    if leagueID[0][1] != leaguePassword:
-        print "Invalid password"
-    else:
-        teamName = "My Team"
-        
-        cursor.execute("INSERT INTO league_roster(participant_id, league_id, team_name) VALUES(%s, %s, %s)", (participantID[0], leagueID[0][0], teamName))
-        db.commit()
+# Already in a league checking
+    cursor.execute("SELECT COUNT(*) FROM league_roster WHERE participant_id = %s AND league_id = %s", (participantID[0], leagueID[0]))
+    ret = cursor.fetchone()
+    if ret[0] > 0:
+        print "Cannot join a league you are already in."
+        sys.exit(0)
+
+# team name in league already taken
+    cursor.execute("SELECT COUNT(*) FROM league_roster WHERE league_id = %s AND team_name = %s", (leagueID[0], teamName))
+    ret = cursor.fetchone()
+    if ret[0] > 0:
+        print "Team name already taken."
+        sys.exit(0)
+
+    cursor.execute("INSERT INTO league_roster(participant_id, league_id, team_name) VALUES(%s, %s, %s)", (participantID[0], leagueID[0], teamName))
+    db.commit()
     
     db.close()
 
 
-joinLeague(sys.argv[1], sys.argv[2], sys.argv[3])
+joinLeague(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
