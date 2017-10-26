@@ -1,7 +1,6 @@
 import MySQLdb
 from _mysql import Error
 import sys
-import time
 import requests
 import base64
 import json
@@ -87,7 +86,9 @@ def addToRoster(leagueName, username, playerName):
         
         response = response.json()
         try:
-            playName =  json.dumps(response['activeplayers']['playerentry'][0]['player']['FirstName']).replace('"', '') + " " + json.dumps(response['activeplayers']['playerentry'][0]['player']['LastName']).replace('"', '')
+            fName = json.dumps(response['activeplayers']['playerentry'][0]['player']['FirstName']).replace('"', '')
+            lName = json.dumps(response['activeplayers']['playerentry'][0]['player']['LastName']).replace('"', '')
+            playerName = fName + " " + lName
         except KeyError:
             print "Could not find the player"
             db.close()
@@ -98,13 +99,7 @@ def addToRoster(leagueName, username, playerName):
         db.close()
         sys.exit(0)
 
-
-
-    dateAdded = time.strftime("%Y-%m-%d %T")
-
-    points = 0
-
-    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport, points, date_acquired) VALUES(%s, %s, %s, %s, %s)", (leagueRosterID[0], playerName, sportID, points, dateAdded))
+    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport) VALUES(%s, %s, %s)", (leagueRosterID[0], playerName, sportID))
 
 
     db.commit()
