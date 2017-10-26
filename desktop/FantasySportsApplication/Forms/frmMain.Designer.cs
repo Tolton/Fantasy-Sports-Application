@@ -40,6 +40,11 @@
             this.lblName = new System.Windows.Forms.Label();
             this.picMugshot = new System.Windows.Forms.PictureBox();
             this.dgvPlayers = new System.Windows.Forms.DataGridView();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.lstOtherTeam = new System.Windows.Forms.ListBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.cmboOtherTeam = new System.Windows.Forms.ComboBox();
             this.tbctrlStats = new FantasySportsApplication.TablessTabControl();
             this.tbpgPlayers = new System.Windows.Forms.TabPage();
             this.lblPlayer_ShorthandedPoints = new System.Windows.Forms.Label();
@@ -210,6 +215,11 @@
             // 
             // tbpgMyTeam
             // 
+            this.tbpgMyTeam.Controls.Add(this.cmboOtherTeam);
+            this.tbpgMyTeam.Controls.Add(this.label26);
+            this.tbpgMyTeam.Controls.Add(this.label25);
+            this.tbpgMyTeam.Controls.Add(this.lstOtherTeam);
+            this.tbpgMyTeam.Controls.Add(this.label17);
             this.tbpgMyTeam.Controls.Add(this.lstMyTeam);
             this.tbpgMyTeam.Location = new System.Drawing.Point(179, 4);
             this.tbpgMyTeam.Name = "tbpgMyTeam";
@@ -222,10 +232,10 @@
             // 
             this.lstMyTeam.FormattingEnabled = true;
             this.lstMyTeam.ItemHeight = 20;
-            this.lstMyTeam.Location = new System.Drawing.Point(22, 17);
+            this.lstMyTeam.Location = new System.Drawing.Point(69, 102);
             this.lstMyTeam.Name = "lstMyTeam";
             this.lstMyTeam.ScrollAlwaysVisible = true;
-            this.lstMyTeam.Size = new System.Drawing.Size(445, 204);
+            this.lstMyTeam.Size = new System.Drawing.Size(445, 484);
             this.lstMyTeam.TabIndex = 0;
             // 
             // tbpgStandings
@@ -291,6 +301,55 @@
             this.dgvPlayers.TabIndex = 0;
             this.dgvPlayers.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlayers_CellDoubleClick);
             this.dgvPlayers.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlayers_RowEnter);
+            // 
+            // label17
+            // 
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(69, 30);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(445, 33);
+            this.label17.TabIndex = 1;
+            this.label17.Text = "My Roster";
+            this.label17.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // label25
+            // 
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.Location = new System.Drawing.Point(617, 30);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(445, 33);
+            this.label25.TabIndex = 3;
+            this.label25.Text = "Other Roster";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lstOtherTeam
+            // 
+            this.lstOtherTeam.FormattingEnabled = true;
+            this.lstOtherTeam.ItemHeight = 20;
+            this.lstOtherTeam.Location = new System.Drawing.Point(617, 102);
+            this.lstOtherTeam.Name = "lstOtherTeam";
+            this.lstOtherTeam.ScrollAlwaysVisible = true;
+            this.lstOtherTeam.Size = new System.Drawing.Size(445, 484);
+            this.lstOtherTeam.TabIndex = 2;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(619, 71);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(98, 20);
+            this.label26.TabIndex = 4;
+            this.label26.Text = "Select team:";
+            // 
+            // cmboOtherTeam
+            // 
+            this.cmboOtherTeam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmboOtherTeam.FormattingEnabled = true;
+            this.cmboOtherTeam.Location = new System.Drawing.Point(724, 67);
+            this.cmboOtherTeam.Name = "cmboOtherTeam";
+            this.cmboOtherTeam.Size = new System.Drawing.Size(338, 28);
+            this.cmboOtherTeam.TabIndex = 5;
+            this.cmboOtherTeam.SelectedIndexChanged += new System.EventHandler(this.cmboOtherTeam_SelectedIndexChanged);
             // 
             // tbctrlStats
             // 
@@ -1412,6 +1471,7 @@
             this.mnuMain.PerformLayout();
             this.tbctrlMain.ResumeLayout(false);
             this.tbpgMyTeam.ResumeLayout(false);
+            this.tbpgMyTeam.PerformLayout();
             this.tbpgSearchPlayers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).EndInit();
@@ -1542,5 +1602,10 @@
         private System.Windows.Forms.Label lblGoalie_GamesStarted;
         private System.Windows.Forms.Label label77;
         private System.Windows.Forms.ListBox lstMyTeam;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.ListBox lstOtherTeam;
+        private System.Windows.Forms.ComboBox cmboOtherTeam;
+        private System.Windows.Forms.Label label26;
     }
 }

@@ -7,13 +7,16 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using MySql.Data.MySqlClient;
 
 namespace FantasySportsApplication
 {
     public partial class frmMain : Form
     {
         public int LeagueID { get; set; }
+        public int LeagueRosterID { get; set; }
         public int CurrentID { get; set; }
+        public string Sport { get; set; }
         public string CurrentUser { get; set; }
         public string LeagueName { get; set; }
         public string TeamName { get; set; }
@@ -252,7 +255,67 @@ namespace FantasySportsApplication
 
         private void AddToRoster(Player player)
         {
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("INSERT INTO roster(league_roster_id, player_name, sport) VALUES({0},'{1}','{2}');", LeagueRosterID, player.Name, Sport), cnn);
+            cmdSql.ExecuteNonQuery();
+            cnn.Close();
+        }
 
+        private void PopulateOtherTeams()
+        {
+            string otherTeam;
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT * FROM league_roster WHERE league_id={0}", LeagueID), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            while (rdr.Read())
+            {
+                otherTeam = rdr.GetString(3);
+                if (otherTeam != TeamName)
+                {
+                    cmboOtherTeam.Items.Add(otherTeam);
+                }
+            }
+            rdr.Close();
+            cnn.Close();
+        }
+
+        private void UpdateRoster()
+        {
+            lstMyTeam.Items.Clear();
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT * FROM roster WHERE league_roster_id={0}", LeagueRosterID), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            while (rdr.Read())
+            {
+                lstMyTeam.Items.Add(rdr.GetString(2));
+            }
+            rdr.Close();
+            cnn.Close();
+        }
+
+        private void UpdateOtherRoster(string teamName)
+        {
+            int otherLeagueRosterID;
+            lstOtherTeam.Items.Clear();
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM league_roster WHERE league_id={0} AND team_name='{1}'", LeagueID, teamName), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            otherLeagueRosterID = Convert.ToInt32(rdr[0].ToString());
+            rdr.Close();
+
+            cmdSql = new MySqlCommand(String.Format("SELECT * FROM roster WHERE league_roster_id={0}", otherLeagueRosterID), cnn);
+            rdr = cmdSql.ExecuteReader();
+            while (rdr.Read())
+            {
+                lstOtherTeam.Items.Add(rdr.GetString(2));
+            }
+            rdr.Close();
+            cnn.Close();
         }
 
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -265,6 +328,8 @@ namespace FantasySportsApplication
         private void frmMain_Load(object sender, EventArgs e)
         {
             ImportPlayerStats();
+            UpdateRoster();
+            PopulateOtherTeams();
         }
 
         private void tbctrlMain_DrawItem(object sender, DrawItemEventArgs e)
@@ -313,7 +378,13 @@ namespace FantasySportsApplication
 
         private void dgvPlayers_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            AddToRoster(PlayerList[Convert.ToInt32(dgvPlayers.Rows[e.RowIndex].Cells["Index"].ToString())]);
+            AddToRoster(PlayerList[Convert.ToInt32(dgvPlayers.Rows[e.RowIndex].Cells["Index"].Value.ToString())]);
+            UpdateRoster();
+        }
+
+        private void cmboOtherTeam_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateOtherRoster(cmboOtherTeam.Text);
         }
     }
 }

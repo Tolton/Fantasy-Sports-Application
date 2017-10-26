@@ -48,7 +48,6 @@ namespace FantasySportsApplication.Forms
             MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league WHERE league_name='{0}' AND league_pass='{1}'", leagueName, leaguePassword), cnn);
             MySqlDataReader rdr = cmdSql.ExecuteReader();
             rdr.Read();
-            lblError.ForeColor = Color.White;
             //Pull the leagueID
             try
             {
@@ -58,12 +57,31 @@ namespace FantasySportsApplication.Forms
             catch
             {
                 lblError.ForeColor = Color.Black;
-                lblError.Text = "ERROR: Incorrect league name / password";
+                lblError.Text = "ERROR: Incorrect league name / password.";
                 tmrFailure.Start();
                 rdr.Close();
                 return false;
             }
             rdr.Close();
+
+            //Check if team name already exists in the league
+            cmdSql = new MySqlCommand(String.Format("SELECT participant_id FROM league_roster WHERE league_id={0} AND team_name='{1}'", leagueID, teamName), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            try
+            {
+                Console.WriteLine((int)rdr[0]);
+                lblError.ForeColor = Color.Black;
+                lblError.Text = "ERROR: Team already exists within the league.";
+                tmrFailure.Start();
+                rdr.Close();
+                return false;
+            }
+            catch
+            {
+                rdr.Close();
+            }
+
 
             //Check if you already exist within that league
             cmdSql = new MySqlCommand(String.Format("SELECT team_name FROM league_roster WHERE participant_id={0} AND league_id={1}", CurrentID, leagueID), cnn);

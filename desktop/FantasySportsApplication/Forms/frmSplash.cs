@@ -234,6 +234,18 @@ namespace FantasySportsApplication
                 formMain.TeamName = rdr[0].ToString();
                 rdr.Close();
 
+                cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM league_roster WHERE participant_id={0} AND league_id={1};", CurrentID, leagueID), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                formMain.LeagueRosterID = Convert.ToInt32(rdr[0].ToString());
+                rdr.Close();
+
+                cmdSql = new MySqlCommand(String.Format("SELECT sport_id FROM league WHERE league_id={0};", leagueID), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                formMain.Sport = rdr[0].ToString();
+                rdr.Close();
+
                 formMain.CurrentID = CurrentID;
                 formMain.CurrentUser = CurrentUser;
                 formMain.Show();
