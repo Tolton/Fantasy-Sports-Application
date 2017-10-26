@@ -250,6 +250,11 @@ namespace FantasySportsApplication
             }
         }
 
+        private void AddToRoster(Player player)
+        {
+
+        }
+
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -304,6 +309,11 @@ namespace FantasySportsApplication
             lblName.Text = String.Format("#{0} - {1}",SelectedPlayer.JerseyNumber, SelectedPlayer.Name);
             PopulateStats(SelectedPlayer);
             picMugshot.ImageLocation = "http://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=" + (SelectedPlayer.Name.Replace(' ','-').Replace(".",""));
+        }
+
+        private void dgvPlayers_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            AddToRoster(PlayerList[Convert.ToInt32(dgvPlayers.Rows[e.RowIndex].Cells["Index"].ToString())]);
         }
     }
 }

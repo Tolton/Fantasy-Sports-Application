@@ -37,6 +37,9 @@
             this.lstMyTeam = new System.Windows.Forms.ListBox();
             this.tbpgStandings = new System.Windows.Forms.TabPage();
             this.tbpgSearchPlayers = new System.Windows.Forms.TabPage();
+            this.lblName = new System.Windows.Forms.Label();
+            this.picMugshot = new System.Windows.Forms.PictureBox();
+            this.dgvPlayers = new System.Windows.Forms.DataGridView();
             this.tbctrlStats = new FantasySportsApplication.TablessTabControl();
             this.tbpgPlayers = new System.Windows.Forms.TabPage();
             this.lblPlayer_ShorthandedPoints = new System.Windows.Forms.Label();
@@ -142,18 +145,15 @@
             this.label67 = new System.Windows.Forms.Label();
             this.label68 = new System.Windows.Forms.Label();
             this.label69 = new System.Windows.Forms.Label();
-            this.lblName = new System.Windows.Forms.Label();
-            this.picMugshot = new System.Windows.Forms.PictureBox();
-            this.dgvPlayers = new System.Windows.Forms.DataGridView();
             this.mnuMain.SuspendLayout();
             this.tbctrlMain.SuspendLayout();
             this.tbpgMyTeam.SuspendLayout();
             this.tbpgSearchPlayers.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).BeginInit();
             this.tbctrlStats.SuspendLayout();
             this.tbpgPlayers.SuspendLayout();
             this.tbpgGoalies.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).BeginInit();
             this.SuspendLayout();
             // 
             // mnuMain
@@ -249,6 +249,48 @@
             this.tbpgSearchPlayers.Size = new System.Drawing.Size(1173, 641);
             this.tbpgSearchPlayers.TabIndex = 2;
             this.tbpgSearchPlayers.Text = "Search Players";
+            // 
+            // lblName
+            // 
+            this.lblName.Font = new System.Drawing.Font("Arial Rounded MT Bold", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblName.ForeColor = System.Drawing.Color.Tomato;
+            this.lblName.Location = new System.Drawing.Point(374, 25);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(707, 42);
+            this.lblName.TabIndex = 2;
+            // 
+            // picMugshot
+            // 
+            this.picMugshot.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picMugshot.ErrorImage = global::FantasySportsApplication.Properties.Resources.UnknownMugshot;
+            this.picMugshot.InitialImage = global::FantasySportsApplication.Properties.Resources.UnknownMugshot;
+            this.picMugshot.Location = new System.Drawing.Point(25, 25);
+            this.picMugshot.Name = "picMugshot";
+            this.picMugshot.Size = new System.Drawing.Size(317, 310);
+            this.picMugshot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picMugshot.TabIndex = 1;
+            this.picMugshot.TabStop = false;
+            // 
+            // dgvPlayers
+            // 
+            this.dgvPlayers.AllowUserToAddRows = false;
+            this.dgvPlayers.AllowUserToDeleteRows = false;
+            this.dgvPlayers.AllowUserToResizeRows = false;
+            this.dgvPlayers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvPlayers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvPlayers.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.dgvPlayers.EnableHeadersVisualStyles = false;
+            this.dgvPlayers.Location = new System.Drawing.Point(0, 394);
+            this.dgvPlayers.MultiSelect = false;
+            this.dgvPlayers.Name = "dgvPlayers";
+            this.dgvPlayers.ReadOnly = true;
+            this.dgvPlayers.RowHeadersVisible = false;
+            this.dgvPlayers.RowTemplate.Height = 28;
+            this.dgvPlayers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvPlayers.Size = new System.Drawing.Size(1173, 247);
+            this.dgvPlayers.TabIndex = 0;
+            this.dgvPlayers.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlayers_CellDoubleClick);
+            this.dgvPlayers.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlayers_RowEnter);
             // 
             // tbctrlStats
             // 
@@ -1352,47 +1394,6 @@
             this.label69.Text = "Games Played:";
             this.label69.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // lblName
-            // 
-            this.lblName.Font = new System.Drawing.Font("Arial Rounded MT Bold", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblName.ForeColor = System.Drawing.Color.Tomato;
-            this.lblName.Location = new System.Drawing.Point(374, 25);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(707, 42);
-            this.lblName.TabIndex = 2;
-            // 
-            // picMugshot
-            // 
-            this.picMugshot.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picMugshot.ErrorImage = global::FantasySportsApplication.Properties.Resources.UnknownMugshot;
-            this.picMugshot.InitialImage = global::FantasySportsApplication.Properties.Resources.UnknownMugshot;
-            this.picMugshot.Location = new System.Drawing.Point(25, 25);
-            this.picMugshot.Name = "picMugshot";
-            this.picMugshot.Size = new System.Drawing.Size(317, 310);
-            this.picMugshot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picMugshot.TabIndex = 1;
-            this.picMugshot.TabStop = false;
-            // 
-            // dgvPlayers
-            // 
-            this.dgvPlayers.AllowUserToAddRows = false;
-            this.dgvPlayers.AllowUserToDeleteRows = false;
-            this.dgvPlayers.AllowUserToResizeRows = false;
-            this.dgvPlayers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvPlayers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPlayers.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dgvPlayers.EnableHeadersVisualStyles = false;
-            this.dgvPlayers.Location = new System.Drawing.Point(0, 394);
-            this.dgvPlayers.MultiSelect = false;
-            this.dgvPlayers.Name = "dgvPlayers";
-            this.dgvPlayers.ReadOnly = true;
-            this.dgvPlayers.RowHeadersVisible = false;
-            this.dgvPlayers.RowTemplate.Height = 28;
-            this.dgvPlayers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvPlayers.Size = new System.Drawing.Size(1173, 247);
-            this.dgvPlayers.TabIndex = 0;
-            this.dgvPlayers.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlayers_RowEnter);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1412,11 +1413,11 @@
             this.tbctrlMain.ResumeLayout(false);
             this.tbpgMyTeam.ResumeLayout(false);
             this.tbpgSearchPlayers.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).EndInit();
             this.tbctrlStats.ResumeLayout(false);
             this.tbpgPlayers.ResumeLayout(false);
             this.tbpgGoalies.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
