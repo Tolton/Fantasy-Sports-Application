@@ -265,6 +265,7 @@ namespace FantasySportsApplication
         private void PopulateOtherTeams()
         {
             string otherTeam;
+            int i = 1;
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
             cnn.Open();
             MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT * FROM league_roster WHERE league_id={0}", LeagueID), cnn);
@@ -272,6 +273,7 @@ namespace FantasySportsApplication
             while (rdr.Read())
             {
                 otherTeam = rdr.GetString(3);
+                dgvStandings.Rows.Add(i++, otherTeam);
                 if (otherTeam != TeamName)
                 {
                     cmboOtherTeam.Items.Add(otherTeam);
@@ -294,6 +296,47 @@ namespace FantasySportsApplication
             }
             rdr.Close();
             cnn.Close();
+        }
+
+        private String DetermineOwner (Player player)
+        {
+            int leagueRosterId;
+            string ownerTeam;
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            MySqlConnection cnn2 = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            cnn2.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM roster WHERE player_name='{0}'", player.Name), cnn);
+            MySqlCommand cmdSql2;
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            MySqlDataReader rdr2;
+            while (rdr.Read())
+            {
+                leagueRosterId = Convert.ToInt32(rdr[0].ToString());
+                cmdSql2 = new MySqlCommand(String.Format("SELECT team_name FROM league_roster WHERE league_id={0} AND league_roster_id={1}", LeagueID, leagueRosterId), cnn2);
+                rdr2 = cmdSql2.ExecuteReader();
+                while (rdr2.Read())
+                {
+                    ownerTeam = rdr2[0].ToString();
+                    rdr.Close();
+                    rdr2.Close();
+                    cnn.Close();
+                    cnn2.Close();
+                    if (ownerTeam == TeamName)
+                    {
+                        return "You!";
+                    }
+                    else
+                    {
+                        return ownerTeam;
+                    }
+                }
+                rdr2.Close();
+            }
+            rdr.Close();
+            cnn.Close();
+            cnn2.Close();
+            return "--Available--";
         }
 
         private void UpdateOtherRoster(string teamName)
@@ -374,17 +417,86 @@ namespace FantasySportsApplication
             lblName.Text = String.Format("#{0} - {1}",SelectedPlayer.JerseyNumber, SelectedPlayer.Name);
             PopulateStats(SelectedPlayer);
             picMugshot.ImageLocation = "http://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=" + (SelectedPlayer.Name.Replace(' ','-').Replace(".",""));
+
+            lblOwner.Text = DetermineOwner(SelectedPlayer);
+            if (lblOwner.Text == "--Available--")
+            {
+                lblOwner.ForeColor = Color.Green;
+            }
+            else if (lblOwner.Text == "You!")
+            {
+                lblOwner.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                lblOwner.ForeColor = Color.Red;
+            }
         }
 
         private void dgvPlayers_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            AddToRoster(PlayerList[Convert.ToInt32(dgvPlayers.Rows[e.RowIndex].Cells["Index"].Value.ToString())]);
-            UpdateRoster();
+            string Owner;
+            Player SelectedPlayer = PlayerList[Convert.ToInt32(dgvPlayers.Rows[e.RowIndex].Cells["Index"].Value.ToString())];
+            Owner = DetermineOwner(SelectedPlayer);
+            
+            if (Owner == "You!")
+            {
+                MessageBox.Show("ERROR: You already own this player.");
+            }
+            else if (Owner == "--Available--")
+            {
+                AddToRoster(SelectedPlayer);
+                UpdateRoster();
+                lblOwner.Text = DetermineOwner(SelectedPlayer);
+                if (lblOwner.Text == "--Available--")
+                {
+                    lblOwner.ForeColor = Color.Green;
+                }
+                else if (lblOwner.Text == "You!")
+                {
+                    lblOwner.ForeColor = Color.Yellow;
+                }
+                else
+                {
+                    lblOwner.ForeColor = Color.Red;
+                }
+            }
+            else
+            {
+                MessageBox.Show("ERROR: Another team already owns this player.");
+            }
         }
 
         private void cmboOtherTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateOtherRoster(cmboOtherTeam.Text);
+        }
+
+        private void lstMyTeam_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = lstMyTeam.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+                cnn.Open();
+                MySqlCommand cmdSql = new MySqlCommand(String.Format("DELETE FROM roster WHERE league_roster_id={0} AND player_name='{1}'", LeagueRosterID, lstMyTeam.Items[index].ToString()), cnn);
+                cmdSql.ExecuteNonQuery();
+                cnn.Close();
+                UpdateRoster();
+                lblOwner.Text = DetermineOwner(PlayerList[Convert.ToInt32(dgvPlayers.SelectedRows[0].Cells["Index"].Value)]);
+                if (lblOwner.Text == "--Available--")
+                {
+                    lblOwner.ForeColor = Color.Green;
+                }
+                else if (lblOwner.Text == "You!")
+                {
+                    lblOwner.ForeColor = Color.Yellow;
+                }
+                else
+                {
+                    lblOwner.ForeColor = Color.Red;
+                }
+            }
         }
     }
 }

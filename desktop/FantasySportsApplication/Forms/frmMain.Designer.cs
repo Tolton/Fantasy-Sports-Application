@@ -45,6 +45,12 @@
             this.lstOtherTeam = new System.Windows.Forms.ListBox();
             this.label26 = new System.Windows.Forms.Label();
             this.cmboOtherTeam = new System.Windows.Forms.ComboBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.lblOwner = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.dgvStandings = new System.Windows.Forms.DataGridView();
+            this.colRank = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colTeamName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tbctrlStats = new FantasySportsApplication.TablessTabControl();
             this.tbpgPlayers = new System.Windows.Forms.TabPage();
             this.lblPlayer_ShorthandedPoints = new System.Windows.Forms.Label();
@@ -153,9 +159,11 @@
             this.mnuMain.SuspendLayout();
             this.tbctrlMain.SuspendLayout();
             this.tbpgMyTeam.SuspendLayout();
+            this.tbpgStandings.SuspendLayout();
             this.tbpgSearchPlayers.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvStandings)).BeginInit();
             this.tbctrlStats.SuspendLayout();
             this.tbpgPlayers.SuspendLayout();
             this.tbpgGoalies.SuspendLayout();
@@ -237,9 +245,12 @@
             this.lstMyTeam.ScrollAlwaysVisible = true;
             this.lstMyTeam.Size = new System.Drawing.Size(445, 484);
             this.lstMyTeam.TabIndex = 0;
+            this.lstMyTeam.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstMyTeam_MouseDoubleClick);
             // 
             // tbpgStandings
             // 
+            this.tbpgStandings.Controls.Add(this.dgvStandings);
+            this.tbpgStandings.Controls.Add(this.label28);
             this.tbpgStandings.Location = new System.Drawing.Point(179, 4);
             this.tbpgStandings.Name = "tbpgStandings";
             this.tbpgStandings.Size = new System.Drawing.Size(1173, 641);
@@ -250,10 +261,12 @@
             // tbpgSearchPlayers
             // 
             this.tbpgSearchPlayers.BackColor = System.Drawing.Color.Black;
-            this.tbpgSearchPlayers.Controls.Add(this.tbctrlStats);
+            this.tbpgSearchPlayers.Controls.Add(this.lblOwner);
+            this.tbpgSearchPlayers.Controls.Add(this.label27);
             this.tbpgSearchPlayers.Controls.Add(this.lblName);
             this.tbpgSearchPlayers.Controls.Add(this.picMugshot);
             this.tbpgSearchPlayers.Controls.Add(this.dgvPlayers);
+            this.tbpgSearchPlayers.Controls.Add(this.tbctrlStats);
             this.tbpgSearchPlayers.Location = new System.Drawing.Point(179, 4);
             this.tbpgSearchPlayers.Name = "tbpgSearchPlayers";
             this.tbpgSearchPlayers.Size = new System.Drawing.Size(1173, 641);
@@ -350,6 +363,73 @@
             this.cmboOtherTeam.Size = new System.Drawing.Size(338, 28);
             this.cmboOtherTeam.TabIndex = 5;
             this.cmboOtherTeam.SelectedIndexChanged += new System.EventHandler(this.cmboOtherTeam_SelectedIndexChanged);
+            // 
+            // label27
+            // 
+            this.label27.BackColor = System.Drawing.Color.Transparent;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label27.ForeColor = System.Drawing.Color.White;
+            this.label27.Location = new System.Drawing.Point(3, 344);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(96, 36);
+            this.label27.TabIndex = 5;
+            this.label27.Text = "Owner:";
+            // 
+            // lblOwner
+            // 
+            this.lblOwner.AutoEllipsis = true;
+            this.lblOwner.BackColor = System.Drawing.Color.Transparent;
+            this.lblOwner.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOwner.ForeColor = System.Drawing.Color.White;
+            this.lblOwner.Location = new System.Drawing.Point(105, 344);
+            this.lblOwner.Name = "lblOwner";
+            this.lblOwner.Size = new System.Drawing.Size(237, 36);
+            this.lblOwner.TabIndex = 6;
+            this.lblOwner.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.Location = new System.Drawing.Point(512, 36);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(160, 37);
+            this.label28.TabIndex = 0;
+            this.label28.Text = "Standings";
+            // 
+            // dgvStandings
+            // 
+            this.dgvStandings.AllowUserToAddRows = false;
+            this.dgvStandings.AllowUserToDeleteRows = false;
+            this.dgvStandings.AllowUserToResizeColumns = false;
+            this.dgvStandings.AllowUserToResizeRows = false;
+            this.dgvStandings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvStandings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colRank,
+            this.colTeamName});
+            this.dgvStandings.Location = new System.Drawing.Point(281, 118);
+            this.dgvStandings.Name = "dgvStandings";
+            this.dgvStandings.ReadOnly = true;
+            this.dgvStandings.RowHeadersVisible = false;
+            this.dgvStandings.RowTemplate.Height = 28;
+            this.dgvStandings.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvStandings.Size = new System.Drawing.Size(613, 483);
+            this.dgvStandings.TabIndex = 1;
+            // 
+            // colRank
+            // 
+            this.colRank.HeaderText = "Rank";
+            this.colRank.Name = "colRank";
+            this.colRank.ReadOnly = true;
+            this.colRank.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // colTeamName
+            // 
+            this.colTeamName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colTeamName.HeaderText = "Team Name";
+            this.colTeamName.Name = "colTeamName";
+            this.colTeamName.ReadOnly = true;
+            this.colTeamName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // tbctrlStats
             // 
@@ -1472,9 +1552,12 @@
             this.tbctrlMain.ResumeLayout(false);
             this.tbpgMyTeam.ResumeLayout(false);
             this.tbpgMyTeam.PerformLayout();
+            this.tbpgStandings.ResumeLayout(false);
+            this.tbpgStandings.PerformLayout();
             this.tbpgSearchPlayers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picMugshot)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPlayers)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvStandings)).EndInit();
             this.tbctrlStats.ResumeLayout(false);
             this.tbpgPlayers.ResumeLayout(false);
             this.tbpgGoalies.ResumeLayout(false);
@@ -1607,5 +1690,11 @@
         private System.Windows.Forms.ListBox lstOtherTeam;
         private System.Windows.Forms.ComboBox cmboOtherTeam;
         private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label lblOwner;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.DataGridView dgvStandings;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colRank;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTeamName;
     }
 }
