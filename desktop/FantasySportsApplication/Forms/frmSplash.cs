@@ -132,6 +132,7 @@ namespace FantasySportsApplication
             catch
             {
                 MessageBox.Show("Cannot connect to the login server at this time. Please try again later.", "Connection Error");
+                return false;
             }
             
             //Grab the salt from the database
