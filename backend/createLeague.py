@@ -2,10 +2,12 @@ import MySQLdb
 from _mysql import Error
 import sys
 
-# createLeague takes in the username, league name, list of rules, max players for the league and the name in the 3 letter abbreviation, as well as the team name and the private key (1 for private or 0 for public)
-# inserts into league as well as the intermediary table -> league_roster
+# createLeague takes in the username, league name, max players, sportID (nhl, nfl etc), as well as the team name and the private key (1 for private or 0 for public)
+# it also takes in some rules for the league including the max Teams, max centers, max left wings, max right wings, max defense and max goalies
+# statsList is a comma delimited string cosisting of the following GamesPlayed,Goals,Assists,Points,HatTricks,Penalties,PenaltyMinutes,PowerplayGoals,PowerplayAssists,PowerplayPoints,ShorthandedGoals,ShorthandedAssists,ShorthandedPoints,GameWinningGoals,GameTyingGoals,PlusMinus,Shots,ShotPercentage,Hits,Faceoffs,FaceoffWins,FaceoffLosses,FaceoffPercent,Wins,Losses,OvertimeWins,OvertimeLosses,GoalsAgainst,ShotsAgainst,Saves,GoalsAgainstAverage,SavePercentage,Shutouts,GamesStarted,CreditForGame,MinutesPlayed
+# inserts into league as well as the intermediary table -> league_roster and inserts the rules into the rules table.
 
-def createLeague(username, leagueName, leaguePassword, rulesList, maxPlayers, sportID, teamName, privateKey):
+def createLeague(username, leagueName, leaguePassword, maxPlayers, sportID, teamName, privateKey, maxTeams, maxC, maxLW, maxRW, maxD, maxG, statsList):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -44,12 +46,20 @@ def createLeague(username, leagueName, leaguePassword, rulesList, maxPlayers, sp
         print "No password given for private league"
         sys.exit(0)
 
+    # Insert all the values into the rules table
+    cursor.execute("INSERT INTO rules(max_teams, max_c, max_lw, max_rw, max_d, max_g, stats_list) VALUES(%s, %s, %s, %s, %s, %s, %s)", (maxTeams, maxC, maxLW, maxRW, maxD, maxG, statsList))
+    db.commit()
+    # Grab the id of the rules table insertion
+    cursor.execute("SELECT LAST_INSERT_ID()")
+
+    rulesID = cursor.fetchone()
+
     query = "INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id, private) VALUES(%s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(query, (leagueName, leaguePassword, participantID[0], rulesList, maxPlayers, sportID, privateKey))
+    cursor.execute(query, (leagueName, leaguePassword, participantID[0], rulesID[0], maxPlayers, sportID, privateKey))
     db.commit()
     
-    # Grab the league id of the last instert
-    cursor.execute("SELECT league_id FROM league WHERE league_name = %s AND league_pass = %s AND commissioner_id = %s AND rules = %s AND max_players = %s AND sport_id = %s AND private = %s", (leagueName, leaguePassword, participantID[0], rulesList, maxPlayers, sportID, privateKey))
+    # Grab the league id of the last insert
+    cursor.execute("SELECT LAST_INSERT_ID()")
         
     
     leagueID = cursor.fetchone()
@@ -64,4 +74,4 @@ def createLeague(username, leagueName, leaguePassword, rulesList, maxPlayers, sp
 
 
 #username, league name, league password, rules, max players, sport id, team name
-createLeague(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8])
+createLeague(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11], sys.argv[12], sys.argv[13], sys.argv[14])
