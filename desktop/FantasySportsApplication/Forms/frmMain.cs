@@ -28,6 +28,29 @@ namespace FantasySportsApplication
 
         private List<Player> PlayerList = new List<Player>();
 
+        private void ListRules()
+        {
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT rules FROM league WHERE league_id={0}", LeagueID), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int rules_id = Convert.ToInt32(rdr[0].ToString());
+            rdr.Close();
+
+            cmdSql = new MySqlCommand(String.Format("SELECT stats_list FROM rules WHERE rules_id={0}", rules_id), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            string stats = rdr[0].ToString();
+            rdr.Close();
+            cnn.Close();
+
+            foreach (string rule in stats.Split(','))
+            {
+                lstScoring.Items.Add(rule);
+            }
+        }
+
         private void ImportPlayerStats()
         {
             int i = 0;
@@ -373,6 +396,7 @@ namespace FantasySportsApplication
             ImportPlayerStats();
             UpdateRoster();
             PopulateOtherTeams();
+            ListRules();
         }
 
         private void tbctrlMain_DrawItem(object sender, DrawItemEventArgs e)
