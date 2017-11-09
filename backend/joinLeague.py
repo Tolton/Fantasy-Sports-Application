@@ -25,6 +25,13 @@ def joinLeague(username, leagueName, leaguePassword, teamName):
         print "Could not find the username."
         sys.exit(0)
 
+# changes password to blank if the league is public
+    cursor.execute("SELECT private FROM league WHERE league_name = %s", [leagueName])
+    privateKey = cursor.fetchone()
+
+    if privateKey[0] == 0:
+        leaguePassword = ""
+
 # league and password checking
     cursor.execute("SELECT league_id FROM league WHERE league_name = %s AND league_pass = %s", (leagueName, leaguePassword))
     leagueID = cursor.fetchone()
