@@ -34,18 +34,22 @@ def addToRoster(leagueName, username, playerName):
     cursor.execute("SELECT league_id FROM league WHERE league_name = %s", [leagueName])
     leagueID = cursor.fetchone()
 
-    cursor.execute("SELECT league_roster_id FROM league_roster WHERE participant_id = %s AND league_id = %s", (participantID[0], leagueID[0]))
-    leagueRosterID = cursor.fetchall()
-        # check if the team name entered is wrong
+    # check if the league name entered is wrong
     if cursor.rowcount == 0:
-        print "Could not find that team."
+        print "Could not find that league."
         db.close()
         sys.exit(0)
 
-    cursor.execute("SELECT sport_id, max_players FROM league WHERE league_id = %s", [leagueRosterID[0]])
+    cursor.execute("SELECT league_roster_id FROM league_roster WHERE participant_id = %s AND league_id = %s", (participantID[0], leagueID[0]))
+    leagueRosterID = cursor.fetchall()
+    
+
+    cursor.execute("SELECT sport_id, max_players, rules FROM league WHERE league_id = %s", [leagueID[0]])
     ret = cursor.fetchall()
+
     sportID = ret[0][0]
     maxPlayers = ret[0][1]
+    rulesID = ret[0][2]
 
 
 # check if they already have the max players on the team
@@ -86,8 +90,10 @@ def addToRoster(leagueName, username, playerName):
         
         response = response.json()
         try:
+            # this just grabs the needed information from the json(yes looks gross)
             fName = json.dumps(response['activeplayers']['playerentry'][0]['player']['FirstName']).replace('"', '')
             lName = json.dumps(response['activeplayers']['playerentry'][0]['player']['LastName']).replace('"', '')
+            position = json.dumps(response['activeplayers']['playerentry'][0]['player']['Position']).replace('"', '')
             playerName = fName + " " + lName
         except KeyError:
             print "Could not find the player"
@@ -98,8 +104,20 @@ def addToRoster(leagueName, username, playerName):
         print('HTTP Request failed')
         db.close()
         sys.exit(0)
+# make a string to hold the attribute in the table to look up e.g. max_c for centers, max_rw for right wing
+    positionRule = "max_"+position.lower()
+# grab the max players for the position of the current player
+    cursor.execute("SELECT "+ positionRule +" FROM rules WHERE rules_id = %s", [rulesID])
+    maxPos = cursor.fetchone()
+# grab how many players are already in the current position on your team
+    cursor.execute("SELECT COUNT(*) FROM roster WHERE position = %s", [position])
+    currPos = cursor.fetchone()
+# Block the user from adding a player if they exceed the position rules
+    if currPos[0] >= maxPos[0]:
+        print "Too many " + position + " on your team."
+        sys.exit(0)
 
-    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport) VALUES(%s, %s, %s)", (leagueRosterID[0], playerName, sportID))
+    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport, position) VALUES(%s, %s, %s, %s)", (leagueRosterID[0], playerName, sportID, position))
 
 
     db.commit()
