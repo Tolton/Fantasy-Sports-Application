@@ -1,6 +1,9 @@
 import MySQLdb
 from _mysql import Error
 import sys
+import hashlib
+import random
+import os
 
 # createLeague takes in the username, league name, max players, sportID (nhl, nfl etc), as well as the team name and the private key (1 for private or 0 for public)
 # it also takes in some rules for the league including the max Teams, max centers, max left wings, max right wings, max defense and max goalies
@@ -37,10 +40,13 @@ def createLeague(username, leagueName, leaguePassword, maxPlayers, sportID, team
     if ret[0] > 0:
         print "League Name taken"
         sys.exit(0)
+    
 
     # Changes the password to blank if the league is public
     if privateKey == "0":
         leaguePassword = ""
+        hex_dig = ""
+        salt = ""
     elif leaguePassword == "":
         # If the league is private and has no password, exit
         print "No password given for private league"
@@ -54,8 +60,23 @@ def createLeague(username, leagueName, leaguePassword, maxPlayers, sportID, team
 
     rulesID = cursor.fetchone()
 
-    query = "INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id, private) VALUES(%s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(query, (leagueName, leaguePassword, participantID[0], rulesID[0], maxPlayers, sportID, privateKey))
+    if privateKey == "1":
+        salt = os.urandom(16).encode('hex')
+    
+        # Avoiding duplicate salts(yes I know this will almost never happen.. except during the Alpha -.-)
+        cursor.execute("SELECT COUNT(league_name) FROM league WHERE salt = %s", [salt])
+        ret = cursor.fetchone()
+        while ret[0] > 0:
+            salt = os.urandom(16).encode('hex')
+            cursor.execute("SELECT COUNT(league_name) FROM league WHERE salt = %s", [salt])
+            ret = cursor.fetchone()
+    
+        # Creating the hashed and salted password
+        hash_object = hashlib.sha256(salt + leaguePassword)
+        hex_dig = hash_object.hexdigest()
+
+    query = "INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id, private, salt) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(query, (leagueName, hex_dig, participantID[0], rulesID[0], maxPlayers, sportID, privateKey, salt))
     db.commit()
     
     # Grab the league id of the last insert
