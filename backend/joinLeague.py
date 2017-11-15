@@ -1,6 +1,8 @@
 import MySQLdb
 from _mysql import Error
 import sys
+import os
+import hashlib
 
 # joinLeague takes in the username and the league name to join. It then inserts this information into the league_roster table
 def joinLeague(username, leagueName, leaguePassword, teamName):
@@ -31,6 +33,12 @@ def joinLeague(username, leagueName, leaguePassword, teamName):
 
     if privateKey[0] == 0:
         leaguePassword = ""
+    elif privateKey[0] == 1:
+        cursor.execute("SELECT salt FROM league WHERE league_name = %s", [leagueName])
+        salt = cursor.fetchone()
+        hex_dig = hashlib.sha256(salt[0] + leaguePassword).hexdigest()
+        leaguePassword = hex_dig
+
 
 # league and password checking
     cursor.execute("SELECT league_id, rules FROM league WHERE league_name = %s AND league_pass = %s", (leagueName, leaguePassword))
