@@ -45,9 +45,20 @@ namespace FantasySportsApplication
             rdr.Close();
             cnn.Close();
 
+            int i = 0;
+
             foreach (string rule in stats.Split(','))
             {
                 lstScoring.Items.Add(rule);
+                dgvStandings.Columns.Add(String.Format("col{0}", i++), rule);
+            }
+
+            foreach (DataGridViewRow row in dgvStandings.Rows)
+            {
+                for (int j=0; j<i; j++)
+                {
+                    row.Cells[j + 2].Value = "0";
+                }
             }
         }
 

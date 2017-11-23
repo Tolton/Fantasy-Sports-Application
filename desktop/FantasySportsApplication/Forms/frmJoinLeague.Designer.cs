@@ -29,101 +29,18 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.lblError = new System.Windows.Forms.Label();
-            this.txtTeamName = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnJoin = new System.Windows.Forms.Button();
-            this.txtLeaguePassword = new System.Windows.Forms.TextBox();
-            this.txtLeagueName = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tmrSuccess = new System.Windows.Forms.Timer(this.components);
             this.tmrFailure = new System.Windows.Forms.Timer(this.components);
+            this.lblError = new System.Windows.Forms.Label();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.colLocked = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colLeagueName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colJoin = new System.Windows.Forms.DataGridViewButtonColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblError
-            // 
-            this.lblError.ForeColor = System.Drawing.Color.Red;
-            this.lblError.Location = new System.Drawing.Point(5, 125);
-            this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(415, 50);
-            this.lblError.TabIndex = 25;
-            this.lblError.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // txtTeamName
-            // 
-            this.txtTeamName.Location = new System.Drawing.Point(196, 86);
-            this.txtTeamName.MaxLength = 30;
-            this.txtTeamName.Name = "txtTeamName";
-            this.txtTeamName.Size = new System.Drawing.Size(184, 26);
-            this.txtTeamName.TabIndex = 21;
-            // 
-            // label5
-            // 
-            this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(1, 89);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(189, 23);
-            this.label5.TabIndex = 24;
-            this.label5.Text = "My Team Name:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(224, 195);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(121, 32);
-            this.btnCancel.TabIndex = 23;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnJoin
-            // 
-            this.btnJoin.Location = new System.Drawing.Point(87, 195);
-            this.btnJoin.Name = "btnJoin";
-            this.btnJoin.Size = new System.Drawing.Size(121, 32);
-            this.btnJoin.TabIndex = 22;
-            this.btnJoin.Text = "Join";
-            this.btnJoin.UseVisualStyleBackColor = true;
-            this.btnJoin.Click += new System.EventHandler(this.btnJoin_Click);
-            // 
-            // txtLeaguePassword
-            // 
-            this.txtLeaguePassword.Location = new System.Drawing.Point(196, 54);
-            this.txtLeaguePassword.MaxLength = 30;
-            this.txtLeaguePassword.Name = "txtLeaguePassword";
-            this.txtLeaguePassword.Size = new System.Drawing.Size(184, 26);
-            this.txtLeaguePassword.TabIndex = 15;
-            // 
-            // txtLeagueName
-            // 
-            this.txtLeagueName.Location = new System.Drawing.Point(196, 22);
-            this.txtLeagueName.MaxLength = 30;
-            this.txtLeagueName.Name = "txtLeagueName";
-            this.txtLeagueName.Size = new System.Drawing.Size(184, 26);
-            this.txtLeagueName.TabIndex = 13;
-            // 
-            // label2
-            // 
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(1, 58);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(189, 23);
-            this.label2.TabIndex = 16;
-            this.label2.Text = "League Password:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // label1
-            // 
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(1, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(189, 23);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "League Name:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // tmrSuccess
             // 
@@ -134,40 +51,107 @@
             this.tmrFailure.Interval = 50;
             this.tmrFailure.Tick += new System.EventHandler(this.tmrFailure_Tick);
             // 
+            // lblError
+            // 
+            this.lblError.ForeColor = System.Drawing.Color.Red;
+            this.lblError.Location = new System.Drawing.Point(262, 298);
+            this.lblError.Name = "lblError";
+            this.lblError.Size = new System.Drawing.Size(616, 27);
+            this.lblError.TabIndex = 25;
+            this.lblError.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colLocked,
+            this.colLeagueName,
+            this.colType,
+            this.colJoin});
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridView1.EnableHeadersVisualStyles = false;
+            this.dataGridView1.Location = new System.Drawing.Point(70, 30);
+            this.dataGridView1.MultiSelect = false;
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowTemplate.Height = 28;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.Size = new System.Drawing.Size(1041, 248);
+            this.dataGridView1.TabIndex = 26;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
+            // colLocked
+            // 
+            this.colLocked.HeaderText = "";
+            this.colLocked.Name = "colLocked";
+            this.colLocked.ReadOnly = true;
+            this.colLocked.Width = 30;
+            // 
+            // colLeagueName
+            // 
+            this.colLeagueName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colLeagueName.HeaderText = "League Name";
+            this.colLeagueName.Name = "colLeagueName";
+            this.colLeagueName.ReadOnly = true;
+            // 
+            // colType
+            // 
+            this.colType.HeaderText = "League Type";
+            this.colType.Name = "colType";
+            this.colType.ReadOnly = true;
+            this.colType.Width = 150;
+            // 
+            // colJoin
+            // 
+            this.colJoin.HeaderText = "";
+            this.colJoin.Name = "colJoin";
+            this.colJoin.ReadOnly = true;
+            this.colJoin.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colJoin.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
             // frmJoinLeague
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(421, 249);
+            this.ClientSize = new System.Drawing.Size(1175, 360);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.lblError);
-            this.Controls.Add(this.txtTeamName);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnJoin);
-            this.Controls.Add(this.txtLeaguePassword);
-            this.Controls.Add(this.txtLeagueName);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Name = "frmJoinLeague";
             this.Text = "frmJoinLeague";
+            this.Load += new System.EventHandler(this.frmJoinLeague_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label lblError;
-        private System.Windows.Forms.TextBox txtTeamName;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnJoin;
-        private System.Windows.Forms.TextBox txtLeaguePassword;
-        private System.Windows.Forms.TextBox txtLeagueName;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer tmrSuccess;
         private System.Windows.Forms.Timer tmrFailure;
+        private System.Windows.Forms.Label lblError;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colLocked;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colLeagueName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colType;
+        private System.Windows.Forms.DataGridViewButtonColumn colJoin;
     }
 }

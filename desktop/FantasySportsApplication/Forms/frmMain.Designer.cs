@@ -157,8 +157,8 @@
             this.label68 = new System.Windows.Forms.Label();
             this.label69 = new System.Windows.Forms.Label();
             this.tbpgLeagueSettings = new System.Windows.Forms.TabPage();
-            this.lstScoring = new System.Windows.Forms.ListBox();
             this.label29 = new System.Windows.Forms.Label();
+            this.lstScoring = new System.Windows.Forms.ListBox();
             this.mnuMain.SuspendLayout();
             this.tbctrlMain.SuspendLayout();
             this.tbpgMyTeam.SuspendLayout();
@@ -322,13 +322,13 @@
             this.dgvStandings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colRank,
             this.colTeamName});
-            this.dgvStandings.Location = new System.Drawing.Point(281, 118);
+            this.dgvStandings.Location = new System.Drawing.Point(59, 118);
             this.dgvStandings.Name = "dgvStandings";
             this.dgvStandings.ReadOnly = true;
             this.dgvStandings.RowHeadersVisible = false;
             this.dgvStandings.RowTemplate.Height = 28;
             this.dgvStandings.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvStandings.Size = new System.Drawing.Size(613, 483);
+            this.dgvStandings.Size = new System.Drawing.Size(1076, 483);
             this.dgvStandings.TabIndex = 1;
             // 
             // colRank
@@ -822,6 +822,7 @@
             // 
             // label13
             // 
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.Color.White;
             this.label13.Location = new System.Drawing.Point(215, 90);
             this.label13.Name = "label13";
@@ -1549,15 +1550,6 @@
             this.tbpgLeagueSettings.Text = "League Settings";
             this.tbpgLeagueSettings.UseVisualStyleBackColor = true;
             // 
-            // lstScoring
-            // 
-            this.lstScoring.FormattingEnabled = true;
-            this.lstScoring.ItemHeight = 20;
-            this.lstScoring.Location = new System.Drawing.Point(353, 143);
-            this.lstScoring.Name = "lstScoring";
-            this.lstScoring.Size = new System.Drawing.Size(435, 364);
-            this.lstScoring.TabIndex = 0;
-            // 
             // label29
             // 
             this.label29.AutoSize = true;
@@ -1567,6 +1559,15 @@
             this.label29.Size = new System.Drawing.Size(361, 46);
             this.label29.TabIndex = 1;
             this.label29.Text = "Scoring Categories";
+            // 
+            // lstScoring
+            // 
+            this.lstScoring.FormattingEnabled = true;
+            this.lstScoring.ItemHeight = 20;
+            this.lstScoring.Location = new System.Drawing.Point(353, 143);
+            this.lstScoring.Name = "lstScoring";
+            this.lstScoring.Size = new System.Drawing.Size(435, 364);
+            this.lstScoring.TabIndex = 0;
             // 
             // frmMain
             // 

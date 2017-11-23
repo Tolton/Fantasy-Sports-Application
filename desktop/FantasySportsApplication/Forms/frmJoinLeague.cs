@@ -1,6 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Drawing;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
 
 namespace FantasySportsApplication.Forms
@@ -10,12 +13,65 @@ namespace FantasySportsApplication.Forms
         public string CurrentUser { get; set; }
         public int CurrentID { get; set; }
 
+        private string saltedPassword;
+        private string salt;
+        static Random random = new Random();
+
+        public static String sha256_hash(String value)
+        {
+            StringBuilder Sb = new StringBuilder();
+
+            using (SHA256 hash = SHA256Managed.Create())
+            {
+                Encoding enc = Encoding.UTF8;
+                Byte[] result = hash.ComputeHash(enc.GetBytes(value));
+
+                foreach (Byte b in result)
+                    Sb.Append(b.ToString("x2"));
+            }
+
+            return Sb.ToString();
+        }
+
         public frmJoinLeague()
         {
             InitializeComponent();
         }
 
-        private bool JoinLeague(int userId, string leagueName, string leaguePassword, string teamName)
+        private bool PopulateTeams()
+        {
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            MySqlConnection cnn2 = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            cnn2.Open();
+            MySqlCommand cmdSql = new MySqlCommand("SELECT league_name FROM league;", cnn);
+            MySqlCommand cmdSql2;
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            MySqlDataReader rdr2;
+            while (rdr.Read())
+            {
+                cmdSql2 = new MySqlCommand(String.Format("SELECT private FROM league WHERE league_name = '{0}';",rdr[0].ToString()), cnn2);
+                rdr2 = cmdSql2.ExecuteReader();
+                rdr2.Read();
+                if (Convert.ToInt32(rdr2[0].ToString()) == 1)
+                {
+                    //PRIVATE
+                    dataGridView1.Rows.Add("🔒", rdr[0].ToString(), "Private", "Enter Password");
+                }
+                else
+                {
+                    //PUBLIC
+                    dataGridView1.Rows.Add("", rdr[0].ToString(), "Public", "Join");
+                }
+                rdr2.Close();
+            }
+            rdr.Close();
+            cnn.Close();
+
+            return true;
+        }
+
+        private bool JoinLeague(int userId, string leagueName, string leaguePassword, string teamName, bool privateLeague)
         {
             int leagueID;
             
@@ -27,7 +83,7 @@ namespace FantasySportsApplication.Forms
                 tmrFailure.Start();
                 return false;
             }
-            else if (leaguePassword == "")
+            else if ((leaguePassword == "") && (privateLeague))
             {
                 lblError.ForeColor = Color.Black;
                 lblError.Text = "ERROR: 'League Password' cannot be blank.";
@@ -45,8 +101,18 @@ namespace FantasySportsApplication.Forms
             //Open a connection to the server
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
             cnn.Open();
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league WHERE league_name='{0}' AND league_pass='{1}'", leagueName, leaguePassword), cnn);
+
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT salt FROM league WHERE league_name='{0}'", leagueName), cnn);
             MySqlDataReader rdr = cmdSql.ExecuteReader();
+
+            rdr.Read();
+            salt = rdr[0].ToString();
+            rdr.Close();
+
+            leaguePassword = sha256_hash(salt + leaguePassword);
+
+            cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league WHERE league_name='{0}' AND league_pass='{1}'", leagueName, leaguePassword), cnn);
+            rdr = cmdSql.ExecuteReader();
             rdr.Read();
             //Pull the leagueID
             try
@@ -114,11 +180,6 @@ namespace FantasySportsApplication.Forms
             return true;
         }
 
-        private void btnJoin_Click(object sender, EventArgs e)
-        {
-            JoinLeague(CurrentID, txtLeagueName.Text, txtLeaguePassword.Text, txtTeamName.Text);
-        }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -138,6 +199,27 @@ namespace FantasySportsApplication.Forms
             {
                 tmrSuccess.Stop();
                 this.Close();
+            }
+        }
+
+        private void frmJoinLeague_Load(object sender, EventArgs e)
+        {
+            PopulateTeams();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 3)
+            {
+                if (dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString() == "Private")
+                {
+                    string pass = Microsoft.VisualBasic.Interaction.InputBox(String.Format("Please enter the password for the league '{0}'", dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()), "Enter League Password", "", -1, -1);
+                    JoinLeague(CurrentID, dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString(), pass, String.Format("{0}s Team", CurrentUser), true);
+                }
+                else
+                {
+                    JoinLeague(CurrentID, dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString(), "", String.Format("{0}s Team", CurrentUser), false);
+                }
             }
         }
     }

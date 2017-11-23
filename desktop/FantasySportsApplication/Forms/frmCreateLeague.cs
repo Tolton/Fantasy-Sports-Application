@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,9 +17,39 @@ namespace FantasySportsApplication
         public string CurrentUser { get; set; }
         public int CurrentID { get; set; }
 
+        private string saltedPassword;
+        private string salt;
+        static Random random = new Random();
+
         public frmCreateLeague()
         {
             InitializeComponent();
+        }
+
+        public static String sha256_hash(String value)
+        {
+            StringBuilder Sb = new StringBuilder();
+
+            using (SHA256 hash = SHA256Managed.Create())
+            {
+                Encoding enc = Encoding.UTF8;
+                Byte[] result = hash.ComputeHash(enc.GetBytes(value));
+
+                foreach (Byte b in result)
+                    Sb.Append(b.ToString("x2"));
+            }
+
+            return Sb.ToString();
+        }
+
+        public static string GetRandomHexNumber(int digits)
+        {
+            byte[] buffer = new byte[digits / 2];
+            random.NextBytes(buffer);
+            string result = String.Concat(buffer.Select(x => x.ToString("X2")).ToArray());
+            if (digits % 2 == 0)
+                return result;
+            return result + random.Next(16).ToString("X");
         }
 
         private string getStatsList()
@@ -58,7 +89,17 @@ namespace FantasySportsApplication
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            CreateLeague(CurrentID, txtLeagueName.Text, txtLeaguePassword.Text, getStatsList(), (int)numMaxPlayers.Value, cmboSport.Text, txtTeamName.Text);
+            if (rdPrivate.Checked)
+            {
+                salt = GetRandomHexNumber(32);
+                saltedPassword = sha256_hash(salt + txtLeaguePassword.Text);
+            }
+            else
+            {
+                salt = "";
+                saltedPassword = "";
+            }
+            CreateLeague(CurrentID, txtLeagueName.Text, saltedPassword, getStatsList(), (int)numMaxPlayers.Value, cmboSport.Text, txtTeamName.Text, salt);
         }
 
         private void frmCreateLeague_Load(object sender, EventArgs e)
@@ -73,7 +114,7 @@ namespace FantasySportsApplication
                 tmrError.Stop();
         }
 
-        private bool CreateLeague (int userID, string leagueName, string leaguePassword, string statsList, int maxPlayers, string sportID, string teamName)
+        private bool CreateLeague (int userID, string leagueName, string leaguePassword, string statsList, int maxPlayers, string sportID, string teamName, string salt)
         {
             int leagueId;
 
@@ -150,7 +191,7 @@ namespace FantasySportsApplication
                 }
 
                 //Insert the league information
-                cmdSql = new MySqlCommand(String.Format("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id, private) VALUES('{0}','{1}',{2}, {3}, {4}, '{5}', {6});", leagueName, leaguePassword, userID, rulesID, maxPlayers, sportID.ToLower(), isPrivate), cnn);
+                cmdSql = new MySqlCommand(String.Format("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id, private, salt) VALUES('{0}','{1}',{2}, {3}, {4}, '{5}', {6}, '{7}');", leagueName, leaguePassword, userID, rulesID, maxPlayers, sportID.ToLower(), isPrivate, salt), cnn);
                 try
                 {
                     cmdSql.ExecuteNonQuery();
@@ -195,6 +236,10 @@ namespace FantasySportsApplication
         private void rdPrivate_CheckedChanged(object sender, EventArgs e)
         {
             txtLeaguePassword.Enabled = rdPrivate.Checked;
+            if (!rdPrivate.Checked)
+            {
+                txtLeaguePassword.Text = "";
+            }
         }
     }
 }

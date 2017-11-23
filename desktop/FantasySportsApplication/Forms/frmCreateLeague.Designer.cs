@@ -78,7 +78,7 @@
             // label1
             // 
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(12, 20);
+            this.label1.Location = new System.Drawing.Point(13, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(189, 23);
             this.label1.TabIndex = 0;
@@ -117,7 +117,7 @@
             // 
             // txtLeagueName
             // 
-            this.txtLeagueName.Location = new System.Drawing.Point(207, 17);
+            this.txtLeagueName.Location = new System.Drawing.Point(208, 12);
             this.txtLeagueName.MaxLength = 30;
             this.txtLeagueName.Name = "txtLeagueName";
             this.txtLeagueName.Size = new System.Drawing.Size(184, 26);
