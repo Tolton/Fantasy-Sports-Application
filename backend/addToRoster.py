@@ -4,6 +4,7 @@ import sys
 import requests
 import base64
 import json
+import datetime
 
 # addToRoster takes the username, team name and player name to be added to the team
 # It then inserts into the roster table
@@ -117,7 +118,10 @@ def addToRoster(leagueName, username, playerName):
         print "Too many " + position + " on your team."
         sys.exit(0)
 
-    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport, position) VALUES(%s, %s, %s, %s)", (leagueRosterID[0], playerName, sportID, position))
+    currDate = datetime.datetime.now()
+    date = str(currDate.year) + str(currDate.month) + str(currDate.day)
+
+    cursor.execute("INSERT INTO roster(league_roster_id, player_name, sport, position, date_acquired) VALUES(%s, %s, %s, %s, %s)", (leagueRosterID[0], playerName, sportID, position, date))
 
 
     db.commit()
