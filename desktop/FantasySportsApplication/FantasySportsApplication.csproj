@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend.cs" />
     <Compile Include="Forms\frmCreateLeague.cs">
       <SubType>Form</SubType>
     </Compile>
