@@ -6,7 +6,7 @@ import json
 import base64
 
 # addPoints grabs all names from the roster table and updates the points according to the date acquired
-def addPoints():
+def addPoints(leagueName):
     
     userName = "teamOgre"
     passName = "sportsApp123"
@@ -20,11 +20,15 @@ def addPoints():
         return False
     
     cursor = db.cursor()
-    
+
+# grab only the certain league
+    cursor.execute("SELECT league_id FROM league WHERE league_name = %s", [leagueName])
+    ret = cursor.fetchone()
+    ret = ret[0]
 
     
-    # grab id, play name and date
-    cursor.execute("SELECT league_roster_id, player_name, date_acquired FROM roster")
+    # grab id, play name and date from the participant who is in that league
+    cursor.execute("SELECT league_roster_id, player_name, date_acquired FROM roster WHERE league_roster_id IN (SELECT league_roster_id FROM league_roster WHERE league_id = %s)", [ret])
     ret = cursor.fetchall()
 
     for row in ret:
@@ -87,4 +91,4 @@ def addPoints():
     db.commit()
     db.close()
 
-addPoints()
+addPoints(sys.argv[1])
