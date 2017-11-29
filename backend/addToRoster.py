@@ -45,17 +45,24 @@ def addToRoster(leagueName, username, playerName):
     leagueRosterID = cursor.fetchall()
     
 
-    cursor.execute("SELECT sport_id, max_players, rules FROM league WHERE league_id = %s", [leagueID[0]])
+    cursor.execute("SELECT sport_id, rules FROM league WHERE league_id = %s", [leagueID[0]])
     ret = cursor.fetchall()
 
     sportID = ret[0][0]
-    maxPlayers = ret[0][1]
-    rulesID = ret[0][2]
+    
+    rulesID = ret[0][1]
 
+    cursor.execute("SELECT * FROM rules WHERE rules_id = %s", [rulesID])
+    ret = cursor.fetchall()
+
+    maxPlayers = 0
+    for x in range(1, 6):
+        maxPlayers = maxPlayers + ret[0][x]
 
 # check if they already have the max players on the team
     cursor.execute("SELECT COUNT(player_name) FROM roster WHERE league_roster_id = %s", [leagueRosterID[0]])
     playCount = cursor.fetchone()
+
     if playCount[0] >= maxPlayers:
         print "Adding too many players."
         db.close()
@@ -67,7 +74,7 @@ def addToRoster(leagueName, username, playerName):
     allUsers = cursor.fetchall()
 
     for row in allUsers:
-        cursor.execute("SELECT player_name FROM roster WHERE league_roster_id = %s", [row[0]])
+        cursor.execute("SELECT player_name, date_acquired FROM roster WHERE league_roster_id = %s", [row[0]])
         # get all players in the team
         ret = cursor.fetchall()
         
@@ -75,6 +82,9 @@ def addToRoster(leagueName, username, playerName):
         for line in ret:
             # check if the the current player is equal to the player being entered
             if line[0].lower() == playerName.lower():
+                # check if the player was dropped
+                if line[1] > 99991200:
+                    break;
                 print "Player is already taken"
                 db.close()
                 sys.exit(0)
@@ -111,9 +121,10 @@ def addToRoster(leagueName, username, playerName):
     cursor.execute("SELECT "+ positionRule +" FROM rules WHERE rules_id = %s", [rulesID])
     maxPos = cursor.fetchone()
 # grab how many players are already in the current position on your team
-    cursor.execute("SELECT COUNT(*) FROM roster WHERE position = %s", [position])
+    cursor.execute("SELECT COUNT(*) FROM roster WHERE position = %s AND league_roster_id = %s AND date_acquired < 99991200", (position, leagueRosterID))
     currPos = cursor.fetchone()
 # Block the user from adding a player if they exceed the position rules
+
     if currPos[0] >= maxPos[0]:
         print "Too many " + position + " on your team."
         sys.exit(0)
