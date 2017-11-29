@@ -41,21 +41,18 @@ def joinLeague(username, leagueName, leaguePassword, teamName):
 
 
 # league and password checking
-    cursor.execute("SELECT league_id, rules FROM league WHERE league_name = %s AND league_pass = %s", (leagueName, leaguePassword))
+    cursor.execute("SELECT league_id, rules, max_teams FROM league WHERE league_name = %s AND league_pass = %s", (leagueName, leaguePassword))
     ret = cursor.fetchall()
     leagueID = ret[0][0]
     rulesID = ret[0][1]
+    maxTeams = ret[0][2]
 
     if cursor.rowcount == 0:
         print "Invalid league name or password."
         sys.exit(0)
-    
-# check if there already is the max teams in the league
-    cursor.execute("SELECT max_teams FROM rules WHERE rules_id = %s", [rulesID])
-    maxTeams = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) FROM league_roster WHERE league_id = %s", [leagueID])
     leagueTeams = cursor.fetchone()
-    if leagueTeams[0] >= maxTeams[0]:
+    if leagueTeams[0] >= maxTeams:
         print "League has reached max teams."
         sys.exit(0)
 
