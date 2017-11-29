@@ -1,9 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows.Forms;
 
 namespace FantasySportsApplication.Forms
@@ -13,26 +10,6 @@ namespace FantasySportsApplication.Forms
         public string CurrentUser { get; set; }
         public int CurrentID { get; set; }
 
-        private string saltedPassword;
-        private string salt;
-        static Random random = new Random();
-
-        public static String sha256_hash(String value)
-        {
-            StringBuilder Sb = new StringBuilder();
-
-            using (SHA256 hash = SHA256Managed.Create())
-            {
-                Encoding enc = Encoding.UTF8;
-                Byte[] result = hash.ComputeHash(enc.GetBytes(value));
-
-                foreach (Byte b in result)
-                    Sb.Append(b.ToString("x2"));
-            }
-
-            return Sb.ToString();
-        }
-
         public frmJoinLeague()
         {
             InitializeComponent();
@@ -41,143 +18,87 @@ namespace FantasySportsApplication.Forms
         private bool PopulateTeams()
         {
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            MySqlConnection cnn2 = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
             cnn.Open();
-            cnn2.Open();
-            MySqlCommand cmdSql = new MySqlCommand("SELECT league_name FROM league;", cnn);
-            MySqlCommand cmdSql2;
+            MySqlCommand cmdSql = new MySqlCommand("SELECT league_id, league_name, max_players, private FROM league;", cnn);
             MySqlDataReader rdr = cmdSql.ExecuteReader();
-            MySqlDataReader rdr2;
+
+            int LeagueID;
+            String LeagueName;
+            int MaxPlayers;
+            int Private;
+            int CurrentPlayers;
+
             while (rdr.Read())
             {
-                cmdSql2 = new MySqlCommand(String.Format("SELECT private FROM league WHERE league_name = '{0}';",rdr[0].ToString()), cnn2);
-                rdr2 = cmdSql2.ExecuteReader();
-                rdr2.Read();
-                if (Convert.ToInt32(rdr2[0].ToString()) == 1)
+                LeagueID = rdr.GetInt32(0);
+                LeagueName = rdr.GetString(1);
+                MaxPlayers = rdr.GetInt32(2);
+                Private = rdr.GetInt32(3);
+                dgvLeagues.Rows.Add("", LeagueName, Private, MaxPlayers, "", "Join Now", LeagueID);
+            }
+            rdr.Close();
+
+            foreach (DataGridViewRow row in dgvLeagues.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.LightGreen;
+                cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0};", row.Cells[6].Value.ToString()), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                CurrentPlayers = rdr.GetInt32(0);
+                if (CurrentPlayers.ToString() == row.Cells[3].Value.ToString())
                 {
-                    //PRIVATE
-                    dataGridView1.Rows.Add("🔒", rdr[0].ToString(), "Private", "Enter Password");
+                    row.DefaultCellStyle.BackColor = Color.LightPink;
+                }
+                row.Cells[3].Value = CurrentPlayers.ToString() + " / " + row.Cells[3].Value.ToString();
+                rdr.Close();
+
+                cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0} AND participant_id = {1};", row.Cells[6].Value.ToString(), CurrentID), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                if (rdr.GetInt32(0) > 0)
+                {
+                    row.Cells[4].Value = "Already Joined";
+                    row.DefaultCellStyle.BackColor = Color.LightPink;
                 }
                 else
                 {
-                    //PUBLIC
-                    dataGridView1.Rows.Add("", rdr[0].ToString(), "Public", "Join");
+                    row.Cells[4].Value = "Not Yet Joined";
                 }
-                rdr2.Close();
+                rdr.Close();
+
+
+                switch (row.Cells[2].Value.ToString())
+                {
+                    case "0":
+                        row.Cells[0].Value = "🔒";
+                        row.Cells[2].Value = "Public";
+                        break;
+
+                    case "1":
+                        row.Cells[0].Value = "";
+                        row.Cells[2].Value = "Private";
+                        break;
+                }
             }
-            rdr.Close();
+
             cnn.Close();
 
             return true;
         }
 
-        private bool JoinLeague(int userId, string leagueName, string leaguePassword, string teamName, bool privateLeague)
+        private void JoinError(String message, Boolean success)
         {
-            int leagueID;
-            
-            //Ensure that all text fields have a value
-            if (leagueName == "")
-            {
-                lblError.ForeColor = Color.Black;
-                lblError.Text = "ERROR: 'League Name' cannot be blank.";
-                tmrFailure.Start();
-                return false;
-            }
-            else if ((leaguePassword == "") && (privateLeague))
-            {
-                lblError.ForeColor = Color.Black;
-                lblError.Text = "ERROR: 'League Password' cannot be blank.";
-                tmrFailure.Start();
-                return false;
-            }
-            else if(teamName == "")
-            {
-                lblError.ForeColor = Color.Black;
-                lblError.Text = "ERROR: 'Team Name' cannot be blank.";
-                tmrFailure.Start();
-                return false;
-            }
-
-            //Open a connection to the server
-            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            cnn.Open();
-
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT salt FROM league WHERE league_name='{0}'", leagueName), cnn);
-            MySqlDataReader rdr = cmdSql.ExecuteReader();
-
-            rdr.Read();
-            salt = rdr[0].ToString();
-            rdr.Close();
-
-            leaguePassword = sha256_hash(salt + leaguePassword);
-
-            cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league WHERE league_name='{0}' AND league_pass='{1}'", leagueName, leaguePassword), cnn);
-            rdr = cmdSql.ExecuteReader();
-            rdr.Read();
-            //Pull the leagueID
-            try
-            {
-                leagueID = (int)rdr[0];
-            }
-            //Catch if incorrect league name / password
-            catch
-            {
-                lblError.ForeColor = Color.Black;
-                lblError.Text = "ERROR: Incorrect league name / password.";
-                tmrFailure.Start();
-                rdr.Close();
-                return false;
-            }
-            rdr.Close();
-
-            //Check if team name already exists in the league
-            cmdSql = new MySqlCommand(String.Format("SELECT participant_id FROM league_roster WHERE league_id={0} AND team_name='{1}'", leagueID, teamName), cnn);
-            rdr = cmdSql.ExecuteReader();
-            rdr.Read();
-            try
-            {
-                Console.WriteLine((int)rdr[0]);
-                lblError.ForeColor = Color.Black;
-                lblError.Text = "ERROR: Team already exists within the league.";
-                tmrFailure.Start();
-                rdr.Close();
-                return false;
-            }
-            catch
-            {
-                rdr.Close();
-            }
-
-
-            //Check if you already exist within that league
-            cmdSql = new MySqlCommand(String.Format("SELECT team_name FROM league_roster WHERE participant_id={0} AND league_id={1}", CurrentID, leagueID), cnn);
-            rdr = cmdSql.ExecuteReader();
-            rdr.Read();
-            try
-            {
-                //Already in league
-                lblError.ForeColor = Color.Black;
-                lblError.Text = rdr[0].ToString();
-                lblError.Text = "ERROR: You already belong to this league!";
-                tmrFailure.Start();
-                rdr.Close();
-                return false;
-            }
-            catch
-            {
-                //Insert your team into the league roster
-                rdr.Close();
-                cmdSql = new MySqlCommand(String.Format("INSERT INTO league_roster(participant_id, league_id, team_name) VALUES({0},{1},'{2}')", CurrentID, leagueID, teamName), cnn);
-                cmdSql.ExecuteNonQuery();
-            }
-            cnn.Close();
-
-            //Show success label
             lblError.ForeColor = Color.Black;
-            lblError.Text = "Success";
-            tmrSuccess.Start();
+            lblError.Text = message;
 
-            return true;
+            if (success)
+            {
+                tmrSuccess.Start();
+            }
+            else
+            {
+                tmrFailure.Start();
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -205,20 +126,53 @@ namespace FantasySportsApplication.Forms
         private void frmJoinLeague_Load(object sender, EventArgs e)
         {
             PopulateTeams();
+            txtTeamName.Text = CurrentUser + "s Team";
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvLeagues_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 3)
+            if (e.ColumnIndex == 5)
             {
-                if (dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString() == "Private")
+                if (txtTeamName.Text == "")
                 {
-                    string pass = Microsoft.VisualBasic.Interaction.InputBox(String.Format("Please enter the password for the league '{0}'", dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()), "Enter League Password", "", -1, -1);
-                    JoinLeague(CurrentID, dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString(), pass, String.Format("{0}s Team", CurrentUser), true);
+                    JoinError("ERROR: Team name cannot be blank", false);
+                    return;
                 }
-                else
+                String password = "";
+                if (dgvLeagues.Rows[e.RowIndex].Cells[2].Value.ToString() == "Private")
                 {
-                    JoinLeague(CurrentID, dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString(), "", String.Format("{0}s Team", CurrentUser), false);
+                    password = Microsoft.VisualBasic.Interaction.InputBox("League Password Required", "Please enter the password for the league:", "", 0, 0);
+                    if (password == "")
+                    {
+                        JoinError("ERROR: No password was entered", false);
+                        return;
+                    }
+                }
+                switch (Backend.JoinLeague(CurrentID, Convert.ToInt32(dgvLeagues.Rows[e.RowIndex].Cells[6].Value.ToString()), password, txtTeamName.Text))
+                {
+                    case 0:
+                        JoinError("Success!", true);
+                        break;
+
+                    case -1:
+                        JoinError("ERROR: Unable to establish a connection to the server.", false);
+                        break;
+
+                    case -2:
+                        JoinError("ERROR: You have already joined this league.", false);
+                        break;
+
+                    case -3:
+                        JoinError("ERROR: League already contains max number of teams.", false);
+                        break;
+
+                    case -4:
+                        JoinError("ERROR: Incorrect league password.", false);
+                        break;
+
+                    case -5:
+                        JoinError("ERROR: Team name already exists within the league.", false);
+                        break;
                 }
             }
         }

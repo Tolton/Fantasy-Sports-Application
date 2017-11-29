@@ -29,17 +29,22 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tmrSuccess = new System.Windows.Forms.Timer(this.components);
             this.tmrFailure = new System.Windows.Forms.Timer(this.components);
             this.lblError = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgvLeagues = new System.Windows.Forms.DataGridView();
             this.colLocked = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colLeagueName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colTeams = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colJoined = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colJoin = new System.Windows.Forms.DataGridViewButtonColumn();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.colLeagueID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.txtTeamName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLeagues)).BeginInit();
             this.SuspendLayout();
             // 
             // tmrSuccess
@@ -54,50 +59,53 @@
             // lblError
             // 
             this.lblError.ForeColor = System.Drawing.Color.Red;
-            this.lblError.Location = new System.Drawing.Point(262, 298);
+            this.lblError.Location = new System.Drawing.Point(264, 324);
             this.lblError.Name = "lblError";
             this.lblError.Size = new System.Drawing.Size(616, 27);
             this.lblError.TabIndex = 25;
             this.lblError.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // dataGridView1
+            // dgvLeagues
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvLeagues.AllowUserToAddRows = false;
+            this.dgvLeagues.AllowUserToDeleteRows = false;
+            this.dgvLeagues.AllowUserToResizeRows = false;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvLeagues.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.dgvLeagues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvLeagues.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colLocked,
             this.colLeagueName,
             this.colType,
-            this.colJoin});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView1.EnableHeadersVisualStyles = false;
-            this.dataGridView1.Location = new System.Drawing.Point(70, 30);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.RowTemplate.Height = 28;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(1041, 248);
-            this.dataGridView1.TabIndex = 26;
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.colTeams,
+            this.colJoined,
+            this.colJoin,
+            this.colLeagueID});
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvLeagues.DefaultCellStyle = dataGridViewCellStyle4;
+            this.dgvLeagues.EnableHeadersVisualStyles = false;
+            this.dgvLeagues.Location = new System.Drawing.Point(70, 30);
+            this.dgvLeagues.MultiSelect = false;
+            this.dgvLeagues.Name = "dgvLeagues";
+            this.dgvLeagues.ReadOnly = true;
+            this.dgvLeagues.RowHeadersVisible = false;
+            this.dgvLeagues.RowTemplate.Height = 28;
+            this.dgvLeagues.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvLeagues.Size = new System.Drawing.Size(1041, 248);
+            this.dgvLeagues.TabIndex = 26;
+            this.dgvLeagues.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvLeagues_CellContentClick);
             // 
             // colLocked
             // 
@@ -120,6 +128,20 @@
             this.colType.ReadOnly = true;
             this.colType.Width = 150;
             // 
+            // colTeams
+            // 
+            this.colTeams.HeaderText = "Registered Teams";
+            this.colTeams.Name = "colTeams";
+            this.colTeams.ReadOnly = true;
+            this.colTeams.Width = 150;
+            // 
+            // colJoined
+            // 
+            this.colJoined.HeaderText = "Availability";
+            this.colJoined.Name = "colJoined";
+            this.colJoined.ReadOnly = true;
+            this.colJoined.Width = 150;
+            // 
             // colJoin
             // 
             this.colJoin.HeaderText = "";
@@ -128,19 +150,46 @@
             this.colJoin.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.colJoin.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
+            // colLeagueID
+            // 
+            this.colLeagueID.HeaderText = "LeagueID";
+            this.colLeagueID.Name = "colLeagueID";
+            this.colLeagueID.ReadOnly = true;
+            this.colLeagueID.Visible = false;
+            // 
+            // txtTeamName
+            // 
+            this.txtTeamName.Location = new System.Drawing.Point(443, 284);
+            this.txtTeamName.Name = "txtTeamName";
+            this.txtTeamName.Size = new System.Drawing.Size(264, 26);
+            this.txtTeamName.TabIndex = 27;
+            // 
+            // label1
+            // 
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(315, 284);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(122, 23);
+            this.label1.TabIndex = 28;
+            this.label1.Text = "Team Name:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // frmJoinLeague
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1175, 360);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtTeamName);
+            this.Controls.Add(this.dgvLeagues);
             this.Controls.Add(this.lblError);
             this.Name = "frmJoinLeague";
             this.Text = "frmJoinLeague";
             this.Load += new System.EventHandler(this.frmJoinLeague_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLeagues)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -148,10 +197,15 @@
         private System.Windows.Forms.Timer tmrSuccess;
         private System.Windows.Forms.Timer tmrFailure;
         private System.Windows.Forms.Label lblError;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgvLeagues;
         private System.Windows.Forms.DataGridViewTextBoxColumn colLocked;
         private System.Windows.Forms.DataGridViewTextBoxColumn colLeagueName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTeams;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colJoined;
         private System.Windows.Forms.DataGridViewButtonColumn colJoin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colLeagueID;
+        private System.Windows.Forms.TextBox txtTeamName;
+        private System.Windows.Forms.Label label1;
     }
 }

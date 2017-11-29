@@ -415,8 +415,132 @@ namespace FantasySportsApplication
             return 0;
         }
 
-        public static int JoinLeague()
+        public static int JoinLeague(int userid, int leagueid, String leaguepassword, String teamname)
+        /*  
+         *  .SYNOPSIS
+         *      Joins a participant to a league
+         *      
+         *  .PARAMETERS
+         *      [0] (int) userid
+         *          The userID for the user that is trying to join the league
+         *          
+         *      [1] (int) leagueid
+         *          The leagueID that is to be joined by the user
+         *          
+         *      [2] (String) leaguepassword
+         *          The password to join the league (if league is public, password will be blank)
+         *          
+         *      [3] (String) teamname
+         *          The name of the team that is to be added to the league
+         *          
+         *  .OUTPUT
+         *      (int)
+         *           0: Successfully joined league
+         *          -1: Unable to establish a connection to the server
+         *          -2: You have already joined this league
+         *          -3: League already contains max number of teams
+         *          -4: Incorrect league password
+         *          -5: Team name already exists within the league
+         */
         {
+
+            //Attempt to establish a connection to the server
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            try
+            {
+                //Successful connection attempt
+                cnn.Open();
+            }
+            catch
+            {
+                //Unable to establish a connection to the server
+                return -1;
+            }
+
+            //Determine if the user already belongs to the league
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0} AND participant_id = {1};", leagueid, userid), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            if (rdr.GetInt32(0) > 0)
+            {
+                //You have already joined this league
+                return -2;
+            }
+            rdr.Close();
+
+            //Determine max number of teams
+            cmdSql = new MySqlCommand(String.Format("SELECT max_players FROM league WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            int MaxTeams = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Determine current number of teams
+            cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            int CurrentTeams = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Determine if league already contains the max number of teams
+            if (CurrentTeams == MaxTeams)
+            {
+                //League already contains max number of teams
+                return -3;
+            }
+
+            //Determine if league is public or private
+            cmdSql = new MySqlCommand(String.Format("SELECT private FROM league WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            int Private = rdr.GetInt32(0);
+            Console.WriteLine(Private);
+            rdr.Close();
+
+            //Compare password if league is private
+            if (Private == 1)
+            {
+                //Salt the given password
+                cmdSql = new MySqlCommand(String.Format("SELECT salt FROM league WHERE league_id = {0};", leagueid), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                String saltedpassword = HashString(rdr.GetString(0) + leaguepassword);
+                rdr.Close();
+
+                //Grab salted league password
+                cmdSql = new MySqlCommand(String.Format("SELECT league_pass FROM league WHERE league_id = {0};", leagueid), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+
+                if (saltedpassword != rdr.GetString(0))
+                {
+                    //Incorrect league password
+                    return -4;
+                }
+                rdr.Close();
+            }
+
+            //Determine if team name already exists
+            cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0} AND team_name = '{1}';", leagueid, teamname), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            if (rdr.GetInt32(0) > 0)
+            {
+                //Team name already exists within the league
+                return -5;
+            }
+            rdr.Close();
+
+            //Join the team to the league
+            cmdSql = new MySqlCommand(String.Format("INSERT INTO league_roster(participant_id, league_id, team_name) VALUES({0},{1},'{2}');", userid, leagueid, teamname), cnn);
+            cmdSql.ExecuteNonQuery();
+
+            cnn.Close();
 
             return 0;
         }

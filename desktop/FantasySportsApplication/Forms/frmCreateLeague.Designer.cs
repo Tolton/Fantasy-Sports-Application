@@ -145,11 +145,6 @@
             // 
             // numMaxPlayers
             // 
-            this.numMaxPlayers.Increment = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
             this.numMaxPlayers.Location = new System.Drawing.Point(206, 33);
             this.numMaxPlayers.Maximum = new decimal(new int[] {
             30,
