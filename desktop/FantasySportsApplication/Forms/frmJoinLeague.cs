@@ -134,9 +134,9 @@ namespace FantasySportsApplication.Forms
                     JoinError("ERROR: Team name cannot be blank", false);
                     return;
                 }
-                if (!Regex.IsMatch(txtTeamName.Text, "^[a-zA-Z0-9]*$"))
+                if (!Regex.IsMatch(txtTeamName.Text, "^[a-zA-Z0-9 ]*$"))
                 {
-                    JoinError("ERROR: Team name must be alpha-numeric", false);
+                    JoinError("ERROR: My Team Name must be alpha-numeric (spaces allowed)", false);
                     return;
                 }
                 String password = "";

@@ -449,8 +449,8 @@ namespace FantasySportsApplication
         private void frmMain_Load(object sender, EventArgs e)
         {
             ImportPlayerStats();
-            PopulateOtherTeams();
             UpdatePlayerPoints();
+            PopulateOtherTeams();
             UpdateRoster(dgvMyRoster, TeamName);
             ListRules();
         }
