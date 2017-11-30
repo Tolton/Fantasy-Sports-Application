@@ -399,7 +399,7 @@
             this.numRW.TabIndex = 9;
             this.numRW.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numRW.Value = new decimal(new int[] {
-            3,
+            2,
             0,
             0,
             0});
@@ -427,7 +427,7 @@
             this.numLW.TabIndex = 7;
             this.numLW.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numLW.Value = new decimal(new int[] {
-            3,
+            2,
             0,
             0,
             0});
@@ -455,7 +455,7 @@
             this.numC.TabIndex = 5;
             this.numC.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numC.Value = new decimal(new int[] {
-            3,
+            2,
             0,
             0,
             0});

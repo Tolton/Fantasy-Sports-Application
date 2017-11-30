@@ -44,6 +44,7 @@
             this.picCreate = new System.Windows.Forms.PictureBox();
             this.tbctrlChooseLeague = new FantasySportsApplication.TablessTabControl();
             this.tbpgChooseLeague = new System.Windows.Forms.TabPage();
+            this.picRefresh = new System.Windows.Forms.PictureBox();
             this.btnEnterLeague = new System.Windows.Forms.Button();
             this.cmboLeague = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -51,6 +52,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnLogout = new System.Windows.Forms.Button();
             this.lblWelcome = new System.Windows.Forms.Label();
+            this.picRefresh2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.picExit)).BeginInit();
             this.tbctrlLogin.SuspendLayout();
             this.tbpgSignedOut.SuspendLayout();
@@ -59,7 +61,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picCreate)).BeginInit();
             this.tbctrlChooseLeague.SuspendLayout();
             this.tbpgChooseLeague.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRefresh)).BeginInit();
             this.tbpgNoLeagues.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRefresh2)).BeginInit();
             this.SuspendLayout();
             // 
             // tmrLoginFail
@@ -196,7 +200,7 @@
             this.picJoin.BackColor = System.Drawing.Color.White;
             this.picJoin.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picJoin.Image = global::FantasySportsApplication.Properties.Resources.join;
-            this.picJoin.Location = new System.Drawing.Point(493, 199);
+            this.picJoin.Location = new System.Drawing.Point(493, 191);
             this.picJoin.Name = "picJoin";
             this.picJoin.Size = new System.Drawing.Size(200, 100);
             this.picJoin.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -211,7 +215,7 @@
             this.picCreate.BackColor = System.Drawing.Color.White;
             this.picCreate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picCreate.Image = global::FantasySportsApplication.Properties.Resources.create;
-            this.picCreate.Location = new System.Drawing.Point(127, 199);
+            this.picCreate.Location = new System.Drawing.Point(127, 191);
             this.picCreate.Name = "picCreate";
             this.picCreate.Size = new System.Drawing.Size(200, 100);
             this.picCreate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -225,29 +229,45 @@
             // 
             this.tbctrlChooseLeague.Controls.Add(this.tbpgChooseLeague);
             this.tbctrlChooseLeague.Controls.Add(this.tbpgNoLeagues);
-            this.tbctrlChooseLeague.Location = new System.Drawing.Point(-3, 69);
+            this.tbctrlChooseLeague.Location = new System.Drawing.Point(-3, 77);
             this.tbctrlChooseLeague.Multiline = true;
             this.tbctrlChooseLeague.Name = "tbctrlChooseLeague";
             this.tbctrlChooseLeague.SelectedIndex = 0;
-            this.tbctrlChooseLeague.Size = new System.Drawing.Size(849, 69);
+            this.tbctrlChooseLeague.Size = new System.Drawing.Size(849, 85);
             this.tbctrlChooseLeague.TabIndex = 7;
             // 
             // tbpgChooseLeague
             // 
             this.tbpgChooseLeague.BackColor = System.Drawing.Color.Black;
+            this.tbpgChooseLeague.Controls.Add(this.picRefresh);
             this.tbpgChooseLeague.Controls.Add(this.btnEnterLeague);
             this.tbpgChooseLeague.Controls.Add(this.cmboLeague);
             this.tbpgChooseLeague.Controls.Add(this.label3);
             this.tbpgChooseLeague.Location = new System.Drawing.Point(4, 29);
             this.tbpgChooseLeague.Name = "tbpgChooseLeague";
             this.tbpgChooseLeague.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpgChooseLeague.Size = new System.Drawing.Size(841, 36);
+            this.tbpgChooseLeague.Size = new System.Drawing.Size(841, 52);
             this.tbpgChooseLeague.TabIndex = 0;
             this.tbpgChooseLeague.Text = "ChooseLeague";
             // 
+            // picRefresh
+            // 
+            this.picRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picRefresh.Image = global::FantasySportsApplication.Properties.Resources.refresh_normal;
+            this.picRefresh.Location = new System.Drawing.Point(657, 3);
+            this.picRefresh.Name = "picRefresh";
+            this.picRefresh.Size = new System.Drawing.Size(35, 35);
+            this.picRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picRefresh.TabIndex = 3;
+            this.picRefresh.TabStop = false;
+            this.picRefresh.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picRefresh_MouseDown);
+            this.picRefresh.MouseEnter += new System.EventHandler(this.picRefresh_MouseEnter);
+            this.picRefresh.MouseLeave += new System.EventHandler(this.picRefresh_MouseLeave);
+            this.picRefresh.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picRefresh_MouseUp);
+            // 
             // btnEnterLeague
             // 
-            this.btnEnterLeague.Location = new System.Drawing.Point(669, -3);
+            this.btnEnterLeague.Location = new System.Drawing.Point(712, 3);
             this.btnEnterLeague.Name = "btnEnterLeague";
             this.btnEnterLeague.Size = new System.Drawing.Size(75, 35);
             this.btnEnterLeague.TabIndex = 2;
@@ -259,7 +279,7 @@
             // 
             this.cmboLeague.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmboLeague.FormattingEnabled = true;
-            this.cmboLeague.Location = new System.Drawing.Point(282, -1);
+            this.cmboLeague.Location = new System.Drawing.Point(282, 6);
             this.cmboLeague.Name = "cmboLeague";
             this.cmboLeague.Size = new System.Drawing.Size(368, 28);
             this.cmboLeague.TabIndex = 1;
@@ -269,7 +289,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(80, -1);
+            this.label3.Location = new System.Drawing.Point(80, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(180, 25);
             this.label3.TabIndex = 0;
@@ -278,11 +298,12 @@
             // tbpgNoLeagues
             // 
             this.tbpgNoLeagues.BackColor = System.Drawing.Color.Black;
+            this.tbpgNoLeagues.Controls.Add(this.picRefresh2);
             this.tbpgNoLeagues.Controls.Add(this.label2);
             this.tbpgNoLeagues.Location = new System.Drawing.Point(4, 29);
             this.tbpgNoLeagues.Name = "tbpgNoLeagues";
             this.tbpgNoLeagues.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpgNoLeagues.Size = new System.Drawing.Size(841, 36);
+            this.tbpgNoLeagues.Size = new System.Drawing.Size(841, 52);
             this.tbpgNoLeagues.TabIndex = 1;
             this.tbpgNoLeagues.Text = "NoLeagues";
             // 
@@ -319,6 +340,21 @@
             this.lblWelcome.Text = "Welcome, username!";
             this.lblWelcome.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // picRefresh2
+            // 
+            this.picRefresh2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picRefresh2.Image = global::FantasySportsApplication.Properties.Resources.refresh_normal;
+            this.picRefresh2.Location = new System.Drawing.Point(773, 0);
+            this.picRefresh2.Name = "picRefresh2";
+            this.picRefresh2.Size = new System.Drawing.Size(35, 35);
+            this.picRefresh2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picRefresh2.TabIndex = 8;
+            this.picRefresh2.TabStop = false;
+            this.picRefresh2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picRefresh_MouseDown);
+            this.picRefresh2.MouseEnter += new System.EventHandler(this.picRefresh_MouseEnter);
+            this.picRefresh2.MouseLeave += new System.EventHandler(this.picRefresh_MouseLeave);
+            this.picRefresh2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picRefresh_MouseUp);
+            // 
             // frmSplash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -342,8 +378,10 @@
             this.tbctrlChooseLeague.ResumeLayout(false);
             this.tbpgChooseLeague.ResumeLayout(false);
             this.tbpgChooseLeague.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRefresh)).EndInit();
             this.tbpgNoLeagues.ResumeLayout(false);
             this.tbpgNoLeagues.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRefresh2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -371,6 +409,8 @@
         private System.Windows.Forms.PictureBox picExit;
         private System.Windows.Forms.PictureBox picJoin;
         private System.Windows.Forms.PictureBox picCreate;
+        private System.Windows.Forms.PictureBox picRefresh;
+        private System.Windows.Forms.PictureBox picRefresh2;
     }
 }
 

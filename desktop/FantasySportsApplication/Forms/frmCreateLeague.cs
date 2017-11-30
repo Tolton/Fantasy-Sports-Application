@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace FantasySportsApplication
@@ -62,6 +63,16 @@ namespace FantasySportsApplication
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
+            if (!Regex.IsMatch(txtLeagueName.Text, "^[a-zA-Z0-9 ]*$"))
+            {
+                CreateError("ERROR: League Name must be alpha-numeric (spaces allowed)", false);
+                return;
+            }
+            if (!Regex.IsMatch(txtTeamName.Text, "^[a-zA-Z0-9 ]*$"))
+            {
+                CreateError("ERROR: My Team Name must be alpha-numeric (spaces allowed)", false);
+                return;
+            }
             switch (Backend.CreateLeague(CurrentID, txtLeagueName.Text, rdPublic.Checked, txtLeaguePassword.Text, getStatsList(), (int)numMaxPlayers.Value, (int)numC.Value, (int)numLW.Value, (int)numRW.Value, (int)numD.Value, (int)numG.Value, cmboSport.Text, txtTeamName.Text))
             {
                 //Successful league registration

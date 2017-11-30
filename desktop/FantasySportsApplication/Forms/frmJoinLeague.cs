@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace FantasySportsApplication.Forms
@@ -19,7 +20,7 @@ namespace FantasySportsApplication.Forms
         {
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
             cnn.Open();
-            MySqlCommand cmdSql = new MySqlCommand("SELECT league_id, league_name, max_players, private FROM league;", cnn);
+            MySqlCommand cmdSql = new MySqlCommand("SELECT league_id, league_name, max_teams, private FROM league;", cnn);
             MySqlDataReader rdr = cmdSql.ExecuteReader();
 
             int LeagueID;
@@ -70,12 +71,12 @@ namespace FantasySportsApplication.Forms
                 switch (row.Cells[2].Value.ToString())
                 {
                     case "0":
-                        row.Cells[0].Value = "🔒";
+                        row.Cells[0].Value = "";
                         row.Cells[2].Value = "Public";
                         break;
 
                     case "1":
-                        row.Cells[0].Value = "";
+                        row.Cells[0].Value = "🔒";
                         row.Cells[2].Value = "Private";
                         break;
                 }
@@ -99,11 +100,6 @@ namespace FantasySportsApplication.Forms
             {
                 tmrFailure.Start();
             }
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
 
         private void tmrFailure_Tick(object sender, EventArgs e)
@@ -136,6 +132,11 @@ namespace FantasySportsApplication.Forms
                 if (txtTeamName.Text == "")
                 {
                     JoinError("ERROR: Team name cannot be blank", false);
+                    return;
+                }
+                if (!Regex.IsMatch(txtTeamName.Text, "^[a-zA-Z0-9]*$"))
+                {
+                    JoinError("ERROR: Team name must be alpha-numeric", false);
                     return;
                 }
                 String password = "";
@@ -175,6 +176,11 @@ namespace FantasySportsApplication.Forms
                         break;
                 }
             }
+        }
+
+        private void dgvLeagues_SelectionChanged(object sender, EventArgs e)
+        {
+            dgvLeagues.ClearSelection();
         }
     }
 }

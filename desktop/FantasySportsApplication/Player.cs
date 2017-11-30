@@ -1,6 +1,6 @@
 ﻿namespace FantasySportsApplication
 {
-    class Player
+    public class Player
     {
         //Shared info and stats
         public string Name { get; set; }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace FantasySportsApplication
 {
@@ -31,6 +28,24 @@ namespace FantasySportsApplication
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
+            if (!Regex.IsMatch(txtUsername.Text, "^[a-zA-Z0-9]*$"))
+            {
+                RegisterError("ERROR: League Name must be alpha-numeric.", false);
+                return;
+            }
+
+            if (txtUsername.Text == "")
+            {
+                RegisterError("ERROR: Username cannot be blank.", false);
+                return;
+            }
+
+            if (txtPassword.Text == "")
+            {
+                RegisterError("ERROR: Password cannot be blank.", false);
+                return;
+            }
+
             switch (Backend.Register(txtUsername.Text, txtPassword.Text, txtPasswordConfirm.Text))
             {
                 case 0:

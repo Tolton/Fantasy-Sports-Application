@@ -1,6 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -374,7 +377,7 @@ namespace FantasySportsApplication
             rdr.Close();
 
             //Create the set of rules to be used in the league
-            cmdSql = new MySqlCommand(String.Format("INSERT INTO rules(max_teams, max_c, max_lw, max_rw, max_d, max_g, stats_list) VALUES({0}, {1}, {2}, {3}, {4}, {5}, '{6}')", MaxTeams, MaxC, MaxLW, MaxRW, MaxD, MaxG, StatsList), cnn);
+            cmdSql = new MySqlCommand(String.Format("INSERT INTO rules(max_c, max_lw, max_rw, max_d, max_g, stats_list) VALUES({0}, {1}, {2}, {3}, {4}, '{5}')", MaxC, MaxLW, MaxRW, MaxD, MaxG, StatsList), cnn);
             cmdSql.ExecuteNonQuery();
             cmdSql = new MySqlCommand("SELECT LAST_INSERT_ID()", cnn);
             rdr = cmdSql.ExecuteReader();
@@ -398,7 +401,7 @@ namespace FantasySportsApplication
             }
 
             //Create the league
-            cmdSql = new MySqlCommand(String.Format("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_players, sport_id, private, salt) VALUES('{0}','{1}',{2}, {3}, {4}, '{5}', {6}, '{7}');", LeagueName, saltedpassword, userid, rulesID, MaxTeams, SportID.ToLower(), isPrivate, salt), cnn);
+            cmdSql = new MySqlCommand(String.Format("INSERT INTO league(league_name, league_pass, commissioner_id, rules, max_teams, sport_id, private, salt) VALUES('{0}','{1}',{2}, {3}, {4}, '{5}', {6}, '{7}');", LeagueName, saltedpassword, userid, rulesID, MaxTeams, SportID.ToLower(), isPrivate, salt), cnn);
             cmdSql.ExecuteNonQuery();
 
             //Update the league roster table to reflect the new league
@@ -470,7 +473,7 @@ namespace FantasySportsApplication
             rdr.Close();
 
             //Determine max number of teams
-            cmdSql = new MySqlCommand(String.Format("SELECT max_players FROM league WHERE league_id = {0};", leagueid), cnn);
+            cmdSql = new MySqlCommand(String.Format("SELECT max_teams FROM league WHERE league_id = {0};", leagueid), cnn);
             rdr = cmdSql.ExecuteReader();
             rdr.Read();
 
@@ -541,6 +544,290 @@ namespace FantasySportsApplication
             cmdSql.ExecuteNonQuery();
 
             cnn.Close();
+
+            return 0;
+        }
+
+
+        public static int AddPlayer(int leaguerosterid, int leagueid, Player player)
+        /*  
+         *  .SYNOPSIS
+         *      Adds a player to a team in a league
+         *      
+         *  .PARAMETERS
+         *      [0] (int) leaguerosterid
+         *          The leagueRosterID for the user and their associated league that's adding the player
+         *          
+         *      [1] (int) leagueid
+         *          The leagueID for the league that the player is being added in
+         *
+         *      [2] (Player) player
+         *          The player to be added (of the Player class)
+         *          
+         *  .OUTPUT
+         *      (int)
+         *           0: Successfully added player to the team
+         *          -1: Unable to establish a connection to the server
+         *          -2: You already own that player
+         *          -3: Another team already owns that player
+         *          -4: Team already has maximum number of spots filled for that position
+         */
+        {
+            //Attempt to establish a connection to the server
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            try
+            {
+                //Successful connection attempt
+                cnn.Open();
+            }
+            catch
+            {
+                //Unable to establish a connection to the server
+                return -1;
+            }
+
+            //Check if you already own that player
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM roster WHERE league_roster_id = {0} AND player_name = '{1}';", leaguerosterid, player.Name), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            if (rdr.GetInt32(0) > 0)
+            {
+                //You already own that player
+                return -2;
+            }
+            rdr.Close();
+
+            //Get number of other teams in the league
+            cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int[] LeagueTeams = new int[rdr.GetInt32(0)];
+            rdr.Close();
+
+            //Get other teams' leaguerosterids
+            cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM league_roster WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            int i = 0;
+            while (rdr.Read())
+            {
+                LeagueTeams[i++] = rdr.GetInt32(0);
+            }
+            rdr.Close();
+
+            //Check if other team already owns that player
+            foreach (int rosterid in LeagueTeams)
+            {
+                cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM roster WHERE league_roster_id = {0} AND player_name = '{1}';", rosterid, player.Name), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                if (rdr.GetInt32(0) > 0)
+                {
+                    //Another team already owns that player
+                    return -3;
+                }
+                rdr.Close();
+            }
+
+
+            //Determine the rules table id
+            cmdSql = new MySqlCommand(String.Format("SELECT rules FROM league WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int rulesid = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Get the max number of players of this position as per the rules
+            cmdSql = new MySqlCommand(String.Format("SELECT max_{0} FROM rules WHERE rules_id = {1};", player.Position.ToLower(), rulesid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int MaxSpots = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Get the current number of spots of this position on the team's roster
+            cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM roster WHERE league_roster_id = {0} AND position = '{1}';", leaguerosterid, player.Position), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int CurrentSpots = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Determine if team already has max amount of spots for that position
+            if (MaxSpots == CurrentSpots)
+            {
+                //Team already has maximum number of spots filled for that position
+                return -4;
+            }
+
+            //Add player to the team
+            cmdSql = new MySqlCommand(String.Format("INSERT INTO roster(league_roster_id, player_name, sport, position, date_acquired) VALUES({0},'{1}','nhl','{2}','{3}');", leaguerosterid, player.Name, player.Position, DateTime.Today.ToString("yyyyMMdd")), cnn);
+            cmdSql.ExecuteNonQuery();
+
+            cnn.Close();
+            return 0;
+        }
+
+        public static String DeterminePlayerOwner(Player player, int leagueid)
+        /*  
+         *  .SYNOPSIS
+         *      Determines which team a player belongs to
+         *      
+         *  .PARAMETERS
+         *      [0] (Player) player
+         *          The player of which the ownership is to be determined (of the Player class)
+         *          
+         *      [1] (int) leagueid
+         *          The leagueID for the league that the player is owned in
+         *          
+         *  .OUTPUT
+         *      (String)
+         *          Returns the team name of the team that owns the player in the league
+         *          Returns null if the player is unowned in the league
+         */
+        {
+            //Attempt to establish a connection to the server
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+
+            //Get number of other teams in the league
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM league_roster WHERE league_id = {0};", leagueid), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int[] LeagueTeams = new int[rdr.GetInt32(0)];
+            rdr.Close();
+
+            //Get other teams' leaguerosterids
+            cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM league_roster WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            int i = 0;
+            while (rdr.Read())
+            {
+                LeagueTeams[i++] = rdr.GetInt32(0);
+            }
+            rdr.Close();
+
+            int teamid = -1;
+
+            //Check if other team already owns that player
+            foreach (int rosterid in LeagueTeams)
+            {
+                cmdSql = new MySqlCommand(String.Format("SELECT COUNT(*) FROM roster WHERE league_roster_id = {0} AND player_name = '{1}';", rosterid, player.Name), cnn);
+                rdr = cmdSql.ExecuteReader();
+                rdr.Read();
+                if (rdr.GetInt32(0) > 0)
+                {
+                    teamid = rosterid;
+                    rdr.Close();
+                    break;
+                }
+                rdr.Close();
+            }
+
+            //If unowned, return null
+            if (teamid == -1)
+                return null;
+
+            cmdSql = new MySqlCommand(String.Format("SELECT team_name FROM league_roster WHERE league_roster_id = {0};", teamid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            return rdr.GetString(0);
+        }
+
+        public static int UpdatePoints(int leaguerosterid, Player player)
+        {
+            //Attempt to establish a connection to the server
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+
+            //Get the date that the player was added to the roster
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT date_acquired FROM roster WHERE league_roster_id = {0} AND player_name = '{1}';", leaguerosterid, player.Name), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            String DateAcquired = rdr.GetString(0);
+            rdr.Close();
+
+            //Get the leagueID
+            cmdSql = new MySqlCommand(String.Format("SELECT league_id FROM league_roster WHERE league_roster_id = {0};", leaguerosterid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int leagueid = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Get the rulesid for the league
+            cmdSql = new MySqlCommand(String.Format("SELECT rules FROM league WHERE league_id = {0};", leagueid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int rulesid = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Get the rules for the league
+            cmdSql = new MySqlCommand(String.Format("SELECT stats_list FROM rules WHERE rules_id = {0};", rulesid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            String statslist = rdr.GetString(0);
+            rdr.Close();
+
+            //Request the player stats from the API
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(String.Format("https://api.mysportsfeeds.com/v1.1/pull/nhl/2017-2018-regular/player_gamelogs.json?player={0}&date=since-{1}", player.Name.Replace(' ','-'), DateAcquired));
+            request.Credentials = new NetworkCredential("Tolton15", "sportsApp123");
+            WebResponse response = request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+
+            //Read and interpret the JSON returned from the API request
+            StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
+            string json = reader.ReadToEnd();
+            dynamic obj = JsonConvert.DeserializeObject(json);
+
+            //Add all stats to points total
+            int totalPoints = 0;
+            if (obj.playergamelogs.gamelogs != null)
+            {
+                foreach (var playerentry in obj.playergamelogs.gamelogs)
+                {
+                    foreach (String stat in statslist.Split(','))
+                    {
+                        totalPoints += Int32.Parse((playerentry.stats[stat]["#text"]).ToString());
+                    }
+                }
+            }
+
+            //Update the points total for the player
+            cmdSql = new MySqlCommand(String.Format("UPDATE roster SET points = {0} WHERE league_roster_id = {1} AND player_name = '{2}';", totalPoints, leaguerosterid, player.Name), cnn);
+            cmdSql.ExecuteNonQuery();
+
+            cnn.Close();
+
+            return totalPoints;
+        }
+
+        public static int DropPlayer(int leaguerosterid, Player player)
+        {
+            //Attempt to establish a connection to the server
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+
+            //Get current points by player
+            //*******UpdatePoints(leaguerosterid, player)*******//
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT points FROM roster WHERE league_roster_id = {0} AND player_name = '{1}';", leaguerosterid, player.Name), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int CurrentPoints = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Get banked points by team
+            cmdSql = new MySqlCommand(String.Format("SELECT banked_points FROM league_roster WHERE league_roster_id = {0};", leaguerosterid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int BankedPoints = rdr.GetInt32(0);
+            rdr.Close();
+
+            //Update the banked points
+            int NewBankedPoints = CurrentPoints + BankedPoints;
+            cmdSql = new MySqlCommand(String.Format("UPDATE league_roster SET banked_points = {0} WHERE league_roster_id = {1};", NewBankedPoints, leaguerosterid), cnn);
+            cmdSql.ExecuteNonQuery();
+
+            //Drop the player
+            cmdSql = new MySqlCommand(String.Format("DELETE FROM roster WHERE league_roster_id = {0} AND player_name = '{1}';", leaguerosterid, player.Name), cnn);
+            cmdSql.ExecuteNonQuery();
 
             return 0;
         }

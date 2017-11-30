@@ -28,6 +28,48 @@ namespace FantasySportsApplication
 
         private List<Player> PlayerList = new List<Player>();
 
+        private void UpdateOwner(Player SelectedPlayer)
+        {
+            String owner = Backend.DeterminePlayerOwner(SelectedPlayer, LeagueID);
+            if (owner == TeamName)
+            {
+                lblOwner.Text = "You!";
+                lblOwner.ForeColor = Color.Yellow;
+            }
+            else if (owner == null)
+            {
+                lblOwner.Text = "--Available--";
+                lblOwner.ForeColor = Color.Green;
+            }
+            else
+            {
+                lblOwner.Text = owner;
+                lblOwner.ForeColor = Color.Red;
+            }
+        }
+
+        private void UpdatePlayerPoints()
+        {
+            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+            cnn.Open();
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT player_name FROM roster WHERE league_roster_id={0}", LeagueRosterID), cnn);
+            MySqlDataReader rdr = cmdSql.ExecuteReader();
+            while (rdr.Read())
+            {
+                String playername = rdr.GetString(0);
+                foreach (Player p in PlayerList)
+                {
+                    if (p.Name == playername)
+                    {
+                        Backend.UpdatePoints(LeagueRosterID, p);
+                        break;
+                    }
+                }
+            }
+            rdr.Close();
+            cnn.Close();
+        }
+
         private void ListRules()
         {
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
@@ -45,20 +87,9 @@ namespace FantasySportsApplication
             rdr.Close();
             cnn.Close();
 
-            int i = 0;
-
             foreach (string rule in stats.Split(','))
             {
                 lstScoring.Items.Add(rule);
-                dgvStandings.Columns.Add(String.Format("col{0}", i++), rule);
-            }
-
-            foreach (DataGridViewRow row in dgvStandings.Rows)
-            {
-                for (int j=0; j<i; j++)
-                {
-                    row.Cells[j + 2].Value = "0";
-                }
             }
         }
 
@@ -113,7 +144,7 @@ namespace FantasySportsApplication
             int minutesplayed;
 
             //Request the player stats from the API
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.mysportsfeeds.com/v1.1/pull/nhl/2016-2017/cumulative_player_stats.json");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.mysportsfeeds.com/v1.1/pull/nhl/2017-2018/cumulative_player_stats.json");
             request.Credentials = new NetworkCredential("Tolton15", "sportsApp123");
             WebResponse response = request.GetResponse();
             Stream responseStream = response.GetResponseStream();
@@ -287,27 +318,45 @@ namespace FantasySportsApplication
             }
         }
 
-        private void AddToRoster(Player player)
-        {
-            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            cnn.Open();
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("INSERT INTO roster(league_roster_id, player_name, sport) VALUES({0},'{1}','{2}');", LeagueRosterID, player.Name, Sport), cnn);
-            cmdSql.ExecuteNonQuery();
-            cnn.Close();
-        }
-
         private void PopulateOtherTeams()
         {
             string otherTeam;
-            int i = 1;
+            int rosterid;
+            int bankedPoints;
+            int playerPoints;
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
             cnn.Open();
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT * FROM league_roster WHERE league_id={0}", LeagueID), cnn);
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT team_name, league_roster_id FROM league_roster WHERE league_id={0}", LeagueID), cnn);
             MySqlDataReader rdr = cmdSql.ExecuteReader();
+
+            MySqlConnection cnn2;
+            MySqlCommand cmdSql2;
+            MySqlDataReader rdr2;
+
             while (rdr.Read())
             {
-                otherTeam = rdr.GetString(3);
-                dgvStandings.Rows.Add(i++, otherTeam);
+                otherTeam = rdr.GetString(0);
+                rosterid = rdr.GetInt32(1);
+
+                cnn2 = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
+                cnn2.Open();
+                cmdSql2 = new MySqlCommand(String.Format("SELECT banked_points FROM league_roster WHERE league_roster_id={0}", rosterid), cnn2);
+                rdr2 = cmdSql2.ExecuteReader();
+                rdr2.Read();
+                bankedPoints = rdr2.GetInt32(0);
+                rdr2.Close();
+
+                cmdSql2 = new MySqlCommand(String.Format("SELECT points FROM roster WHERE league_roster_id={0}", rosterid), cnn2);
+                rdr2 = cmdSql2.ExecuteReader();
+                playerPoints = 0;
+                while (rdr2.Read())
+                {
+                    playerPoints += rdr2.GetInt32(0);
+                }
+                rdr2.Close();
+                cnn2.Close();
+
+                dgvStandings.Rows.Add(otherTeam, (bankedPoints + playerPoints));
                 if (otherTeam != TeamName)
                 {
                     cmboOtherTeam.Items.Add(otherTeam);
@@ -317,80 +366,75 @@ namespace FantasySportsApplication
             cnn.Close();
         }
 
-        private void UpdateRoster()
+        private void UpdateRoster(DataGridView dgv, String team)
         {
-            lstMyTeam.Items.Clear();
+            //Find the rules for the league
             MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
             cnn.Open();
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT * FROM roster WHERE league_roster_id={0}", LeagueRosterID), cnn);
-            MySqlDataReader rdr = cmdSql.ExecuteReader();
-            while (rdr.Read())
-            {
-                lstMyTeam.Items.Add(rdr.GetString(2));
-            }
-            rdr.Close();
-            cnn.Close();
-        }
-
-        private String DetermineOwner (Player player)
-        {
-            int leagueRosterId;
-            string ownerTeam;
-            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            MySqlConnection cnn2 = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            cnn.Open();
-            cnn2.Open();
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM roster WHERE player_name='{0}'", player.Name), cnn);
-            MySqlCommand cmdSql2;
-            MySqlDataReader rdr = cmdSql.ExecuteReader();
-            MySqlDataReader rdr2;
-            while (rdr.Read())
-            {
-                leagueRosterId = Convert.ToInt32(rdr[0].ToString());
-                cmdSql2 = new MySqlCommand(String.Format("SELECT team_name FROM league_roster WHERE league_id={0} AND league_roster_id={1}", LeagueID, leagueRosterId), cnn2);
-                rdr2 = cmdSql2.ExecuteReader();
-                while (rdr2.Read())
-                {
-                    ownerTeam = rdr2[0].ToString();
-                    rdr.Close();
-                    rdr2.Close();
-                    cnn.Close();
-                    cnn2.Close();
-                    if (ownerTeam == TeamName)
-                    {
-                        return "You!";
-                    }
-                    else
-                    {
-                        return ownerTeam;
-                    }
-                }
-                rdr2.Close();
-            }
-            rdr.Close();
-            cnn.Close();
-            cnn2.Close();
-            return "--Available--";
-        }
-
-        private void UpdateOtherRoster(string teamName)
-        {
-            int otherLeagueRosterID;
-            lstOtherTeam.Items.Clear();
-            MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-            cnn.Open();
-            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM league_roster WHERE league_id={0} AND team_name='{1}'", LeagueID, teamName), cnn);
+            MySqlCommand cmdSql = new MySqlCommand(String.Format("SELECT rules FROM league WHERE league_id={0};", LeagueID), cnn);
             MySqlDataReader rdr = cmdSql.ExecuteReader();
             rdr.Read();
-            otherLeagueRosterID = Convert.ToInt32(rdr[0].ToString());
+            int rulesid = rdr.GetInt32(0);
             rdr.Close();
 
-            cmdSql = new MySqlCommand(String.Format("SELECT * FROM roster WHERE league_roster_id={0}", otherLeagueRosterID), cnn);
+            //Add rows for each number of positions allowed in league
+            cmdSql = new MySqlCommand(String.Format("SELECT max_c, max_lw, max_rw, max_d, max_g FROM rules WHERE rules_id={0};", rulesid), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+
+            int maxc = rdr.GetInt32(0);
+            int maxlw = rdr.GetInt32(1);
+            int maxrw = rdr.GetInt32(2);
+            int maxd = rdr.GetInt32(3);
+            int maxg = rdr.GetInt32(4);
+
+            rdr.Close();
+            dgv.Rows.Clear();
+
+            for (int i = 0; i < maxc; i++)
+                dgv.Rows.Add("C", "<<empty>>", "0");
+
+            for (int i = 0; i < maxlw; i++)
+                dgv.Rows.Add("LW", "<<empty>>", "0");
+
+            for (int i = 0; i < maxrw; i++)
+                dgv.Rows.Add("RW", "<<empty>>", "0");
+
+            for (int i = 0; i < maxd; i++)
+                dgv.Rows.Add("D", "<<empty>>", "0");
+
+            for (int i = 0; i < maxg; i++)
+                dgv.Rows.Add("G", "<<empty>>", "0");
+
+            //Grab the team roster ID
+            cmdSql = new MySqlCommand(String.Format("SELECT league_roster_id FROM league_roster WHERE team_name = '{0}' AND league_id = {1};", team, LeagueID), cnn);
+            rdr = cmdSql.ExecuteReader();
+            rdr.Read();
+            int teamid = rdr.GetInt32(0);
+            rdr.Close();
+
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.LightGray;
+            }
+
+            //Grab players on the team
+            cmdSql = new MySqlCommand(String.Format("SELECT position, player_name, points FROM roster WHERE league_roster_id = {0};", teamid), cnn);
             rdr = cmdSql.ExecuteReader();
             while (rdr.Read())
             {
-                lstOtherTeam.Items.Add(rdr.GetString(2));
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    if (row.Cells[0].Value.ToString() == rdr.GetString(0) && (row.Cells[1].Value.ToString() == "<<empty>>"))
+                    {
+                        row.Cells[1].Value = rdr.GetString(1);
+                        row.Cells[2].Value = rdr.GetInt32(2);
+                        row.DefaultCellStyle.BackColor = Color.LightSkyBlue;
+                        break;
+                    }
+                }
             }
+
             rdr.Close();
             cnn.Close();
         }
@@ -405,8 +449,9 @@ namespace FantasySportsApplication
         private void frmMain_Load(object sender, EventArgs e)
         {
             ImportPlayerStats();
-            UpdateRoster();
             PopulateOtherTeams();
+            UpdatePlayerPoints();
+            UpdateRoster(dgvMyRoster, TeamName);
             ListRules();
         }
 
@@ -452,86 +497,67 @@ namespace FantasySportsApplication
             lblName.Text = String.Format("#{0} - {1}",SelectedPlayer.JerseyNumber, SelectedPlayer.Name);
             PopulateStats(SelectedPlayer);
             picMugshot.ImageLocation = "http://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=" + (SelectedPlayer.Name.Replace(' ','-').Replace(".",""));
-
-            lblOwner.Text = DetermineOwner(SelectedPlayer);
-            if (lblOwner.Text == "--Available--")
-            {
-                lblOwner.ForeColor = Color.Green;
-            }
-            else if (lblOwner.Text == "You!")
-            {
-                lblOwner.ForeColor = Color.Yellow;
-            }
-            else
-            {
-                lblOwner.ForeColor = Color.Red;
-            }
+            UpdateOwner(SelectedPlayer);
         }
 
         private void dgvPlayers_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            string Owner;
             Player SelectedPlayer = PlayerList[Convert.ToInt32(dgvPlayers.Rows[e.RowIndex].Cells["Index"].Value.ToString())];
-            Owner = DetermineOwner(SelectedPlayer);
-            
-            if (Owner == "You!")
+            switch (Backend.AddPlayer(LeagueRosterID, LeagueID, SelectedPlayer))
             {
-                MessageBox.Show("ERROR: You already own this player.");
+                case 0:
+                    MessageBox.Show(String.Format("{0} has been successfully added to your team!", SelectedPlayer.Name));
+                    break;
+
+                case -1:
+                    MessageBox.Show("ERROR: Unable to establish a connection to the server.");
+                    break;
+
+                case -2:
+                    MessageBox.Show("ERROR: You already own this player!");
+                    break;
+
+                case -3:
+                    MessageBox.Show("ERROR: Another team already owns this player!");
+                    break;
+
+                case -4:
+                    MessageBox.Show(String.Format("ERROR: You already have the maximum number of players of the '{0}' position!", SelectedPlayer.Position));
+                    break;
             }
-            else if (Owner == "--Available--")
-            {
-                AddToRoster(SelectedPlayer);
-                UpdateRoster();
-                lblOwner.Text = DetermineOwner(SelectedPlayer);
-                if (lblOwner.Text == "--Available--")
-                {
-                    lblOwner.ForeColor = Color.Green;
-                }
-                else if (lblOwner.Text == "You!")
-                {
-                    lblOwner.ForeColor = Color.Yellow;
-                }
-                else
-                {
-                    lblOwner.ForeColor = Color.Red;
-                }
-            }
-            else
-            {
-                MessageBox.Show("ERROR: Another team already owns this player.");
-            }
+            UpdateOwner(SelectedPlayer);
+            UpdateRoster(dgvMyRoster, TeamName);
         }
 
         private void cmboOtherTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateOtherRoster(cmboOtherTeam.Text);
+            UpdateRoster(dgvOtherRoster, cmboOtherTeam.Text);
         }
 
-        private void lstMyTeam_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void tbctrlMain_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int index = lstMyTeam.IndexFromPoint(e.Location);
-            if (index != System.Windows.Forms.ListBox.NoMatches)
+            if (tbctrlMain.SelectedIndex == 2)
             {
-                MySqlConnection cnn = new MySqlConnection("SERVER=cis4250.cpnptclkba5c.ca-central-1.rds.amazonaws.com;DATABASE=fantasySportsApplication;UID=teamOgre;PWD=sportsApp123;Connection Timeout=5");
-                cnn.Open();
-                MySqlCommand cmdSql = new MySqlCommand(String.Format("DELETE FROM roster WHERE league_roster_id={0} AND player_name='{1}'", LeagueRosterID, lstMyTeam.Items[index].ToString()), cnn);
-                cmdSql.ExecuteNonQuery();
-                cnn.Close();
-                UpdateRoster();
-                lblOwner.Text = DetermineOwner(PlayerList[Convert.ToInt32(dgvPlayers.SelectedRows[0].Cells["Index"].Value)]);
-                if (lblOwner.Text == "--Available--")
+                Player SelectedPlayer = PlayerList[Convert.ToInt32(dgvPlayers.SelectedRows[0].Cells["Index"].Value.ToString())];
+                UpdateOwner(SelectedPlayer);
+            }
+        }
+
+        private void btnDrop_Click(object sender, EventArgs e)
+        {
+            Player SelectedPlayer = null;
+            foreach (Player p in PlayerList)
+            {
+                if (p.Name == dgvMyRoster.SelectedRows[0].Cells[1].Value.ToString())
                 {
-                    lblOwner.ForeColor = Color.Green;
-                }
-                else if (lblOwner.Text == "You!")
-                {
-                    lblOwner.ForeColor = Color.Yellow;
-                }
-                else
-                {
-                    lblOwner.ForeColor = Color.Red;
+                    SelectedPlayer = p;
+                    break;
                 }
             }
+            if (SelectedPlayer == null)
+                return;
+            Backend.DropPlayer(LeagueRosterID, SelectedPlayer);
+            UpdateRoster(dgvMyRoster, TeamName);
         }
     }
 }

@@ -153,5 +153,14 @@
   <ItemGroup>
     <None Include="Resources\join_hover.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh_hover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh_mousedown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh_normal.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

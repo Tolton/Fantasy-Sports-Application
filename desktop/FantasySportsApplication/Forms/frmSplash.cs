@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using FantasySportsApplication.Forms;
+using System.Text.RegularExpressions;
 
 namespace FantasySportsApplication
 {
@@ -40,6 +41,11 @@ namespace FantasySportsApplication
         //Login Button clicked
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            if (!Regex.IsMatch(txtUsername.Text, "^[a-zA-Z0-9]*$"))
+            {
+                LoginError("ERROR: Usernames can only be alpha-numeric");
+                return;
+            }
             int LoginResult = Backend.Login(txtUsername.Text, txtPassword.Text);
             switch (LoginResult)
             {
@@ -188,6 +194,42 @@ namespace FantasySportsApplication
                 formMain.CurrentUser = CurrentUser;
                 formMain.Show();
                 this.Hide();
+            }
+        }
+
+        private void picRefresh_MouseEnter(object sender, EventArgs e)
+        {
+            picRefresh.Image = Properties.Resources.refresh_hover;
+        }
+
+        private void picRefresh_MouseLeave(object sender, EventArgs e)
+        {
+            picRefresh.Image = Properties.Resources.refresh_normal;
+        }
+
+        private void picRefresh_MouseDown(object sender, MouseEventArgs e)
+        {
+            picRefresh.Image = Properties.Resources.refresh_mousedown;
+        }
+
+        private void picRefresh_MouseUp(object sender, MouseEventArgs e)
+        {
+            picRefresh.Image = Properties.Resources.refresh_hover;
+            cmboLeague.Items.Clear();
+            String[] Leagues = Backend.PullLeagues(CurrentID);
+            if (Leagues == null)
+            {
+                //When user has not yet joined a league
+                tbctrlChooseLeague.SelectedTab = tbpgNoLeagues;
+            }
+            else
+            {
+                //When user has joined one or more leagues
+                tbctrlChooseLeague.SelectedTab = tbpgChooseLeague;
+                foreach (String LeagueName in Leagues)
+                {
+                    cmboLeague.Items.Add(LeagueName);
+                }
             }
         }
     }
