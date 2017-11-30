@@ -37,11 +37,21 @@ def dropFromRoster(leagueName, username, playerName):
         db.close()
         sys.exit(0)
     
-    cursor.execute("SELECT league_roster_id FROM league_roster WHERE participant_id = %s AND league_id = %s", (participantID[0], leagueID[0]))
-    leagueRosterID = cursor.fetchone()
-    leagueRosterID = leagueRosterID[0]
+    cursor.execute("SELECT league_roster_id, banked_points FROM league_roster WHERE participant_id = %s AND league_id = %s", (participantID[0], leagueID[0]))
+    ret = cursor.fetchall()
+    leagueRosterID = ret[0][0]
+    bankedPoints = ret[0][1]
 
-    cursor.execute("UPDATE roster SET date_acquired = 99991230 WHERE player_name = %s AND league_roster_id = %s", (playerName, leagueRosterID))
+    cursor.execute("SELECT points FROM roster WHERE league_roster_id = %s AND player_name = %s", (leagueRosterID, playerName))
+    points = cursor.fetchone()
+    points = points[0]
+
+    newPoints = bankedPoints + points
+
+    cursor.execute("UPDATE league_roster SET banked_points = %s WHERE league_roster_id = %s", (newPoints, leagueRosterID))
+
+
+    cursor.execute("DELETE FROM roster WHERE player_name = %s AND league_roster_id = %s", (playerName, leagueRosterID))
     db.commit()
     db.close()
 
