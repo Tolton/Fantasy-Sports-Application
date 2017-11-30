@@ -34,6 +34,10 @@ def leagueStandings(leagueName):
         cursor.execute("SELECT username FROM participants WHERE participant_id = %s", [row[1]])
         currUser = cursor.fetchone()
         currUser = currUser[0]
+        #grab the banked points
+        cursor.execute("SELECT banked_points FROM league_roster WHERE league_roster_id = %s", [row[0]])
+        bankedPoints = cursor.fetchone()
+        bankedPoints = bankedPoints[0]
         # grab each players points in the roster and add together
         cursor.execute("SELECT points FROM roster WHERE league_roster_id = %s", [row[0]])
         nextPoints = cursor.fetchall()
@@ -41,7 +45,7 @@ def leagueStandings(leagueName):
             points = points + i[0]
         currJson = {}
         currJson['participant'] = currUser
-        currJson['points'] = points
+        currJson['points'] = points + bankedPoints
         retJson.append(currJson)
 
     print json.dumps(retJson)
